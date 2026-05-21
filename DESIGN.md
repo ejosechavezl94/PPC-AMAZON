@@ -1,0 +1,129 @@
+---
+version: "alpha"
+name: "Glassmorphism Claro"
+description: "Sistema de diseño premium y elegante con estética de vidrio esmerilado en fondo claro para el Asistente PPC de Amazon. Optimizado para máxima legibilidad, contraste accesible y retroalimentación interactiva."
+colors:
+  primary: "#0f172a"
+  secondary: "#475569"
+  tertiary: "#94a3b8"
+  neutral: "#f8fafc"
+  accent: "#ea580c"
+  bg-card: "#ffffff"
+  border: "#cbd5e1"
+  green: "#059669"
+  red: "#e11d48"
+  amber: "#d97706"
+  blue: "#2563eb"
+  purple: "#7c3aed"
+
+typography:
+  heading-xl:
+    fontFamily: Inter, sans-serif
+    fontSize: 24px
+    fontWeight: 700
+    letterSpacing: "-0.03em"
+  heading-lg:
+    fontFamily: Inter, sans-serif
+    fontSize: 16px
+    fontWeight: 700
+    letterSpacing: "-0.02em"
+  body-md:
+    fontFamily: Inter, sans-serif
+    fontSize: 14px
+    lineHeight: 1.6
+  body-sm:
+    fontFamily: Inter, sans-serif
+    fontSize: 12.5px
+    lineHeight: 1.5
+  mono-code:
+    fontFamily: Geist Mono, monospace
+    fontSize: 12px
+    fontWeight: 500
+  label-caps:
+    fontFamily: Inter, sans-serif
+    fontSize: 11px
+    fontWeight: 700
+    letterSpacing: "0.08em"
+
+rounded:
+  sm: "10px"
+  md: "16px"
+
+spacing:
+  xs: "8px"
+  sm: "12px"
+  md: "16px"
+  lg: "24px"
+  xl: "32px"
+
+components:
+  card:
+    backgroundColor: "{colors.bg-card}"
+    rounded: "{rounded.md}"
+    padding: "{spacing.lg}"
+  button-primary:
+    backgroundColor: "{colors.primary}"
+    textColor: "#ffffff"
+    rounded: "{rounded.sm}"
+    padding: "10px 20px"
+  button-secondary:
+    backgroundColor: "{colors.neutral}"
+    textColor: "{colors.primary}"
+    rounded: "{rounded.sm}"
+    padding: "10px 20px"
+---
+
+## Overview
+
+El sistema **Glassmorphism Claro** está diseñado específicamente para el Asistente PPC de Amazon. Representa la fusión de un panel analítico sofisticado con una interfaz limpia, profesional y de alto contraste bajo fondo claro. Evoca transparencia, modernidad y fiabilidad ejecutiva.
+
+## Colors
+
+El espectro cromático se divide en tres niveles lógicos claros para guiar el flujo cognitivo del usuario:
+
+- **Neutros de Fondo y Estructura:** El fondo principal es suave y degradado (`#f8fafc` a `#f1f5f9`). Los contenedores y tarjetas simulan placas de vidrio translúcido con un fondo blanco (`#ffffff`) configurado con `0.75` de opacidad y un desenfoque de fondo de `20px` y sombras finas, lo que genera una ilusión de profundidad.
+- **Texto Principal (primary):** Alto contraste absoluto (`#0f172a` para títulos principales, `#475569` para descripciones secundaria) garantizando máxima legibilidad sin fatiga visual.
+- **Semántica Publicitaria de Campaña:**
+  - **Naranja Amazon (accent / #ea580c):** Acentos de la marca y advertencias críticas de salvaguarda (Escudo).
+  - **Verde Esmeralda (green / #059669):** Casos de éxito, rentabilidad positiva y ganancias consolidadas.
+  - **Rojo Carmín (red / #e11d48):** Fugas de presupuesto, clics desperdiciados y acciones de negación urgente.
+  - **Azul Corporativo (blue / #2563eb):** Indicaciones de creación de campañas y optimizaciones.
+  - **Púrpura Vibrante (purple / #7c3aed):** Recomendaciones específicas de CTR y listing.
+
+## Typography
+
+Utiliza dos familias tipográficas de alta gama:
+- **Inter:** Para toda la interfaz de usuario, cabeceras y métricas clave. Su diseño geométrico y alta legibilidad en pantallas de retina la hacen ideal para dashboards densos en información.
+- **Geist Mono:** Destinado exclusivamente para valores de datos, métricas exactas, nombres de palabras clave de Amazon y códigos fuente. Esto proporciona un carácter técnico y limpio.
+
+## Layout
+
+Toda la cuadrícula se rige por un sistema estricto de espaciado y márgenes:
+- **Main Wrapper:** Ancho máximo de `1280px` centrado con padding lateral adaptable.
+- **Secciones Interactivas:** Cuadrículas fluidas (`g2` para paneles paralelos, `g3` y `g4` para resúmenes de KPIs).
+- **Tablas:** Diseño adaptable con scroll lateral incorporado en móviles, bordes suaves y hover dinámico por fila.
+
+## Elevation & Depth
+
+La profundidad en 2.5D se logra a través de:
+- **Glass Blur:** Un filtro de fondo de `blur(20px)` en tarjetas y cabeceras que suaviza los elementos traseros.
+- **Sombras Premium:** `0 10px 30px rgba(15, 23, 42, 0.05)` para emular que las tarjetas flotan elegantemente sobre el lienzo principal.
+- **Hover Micro-animations:** Las tarjetas y botones se elevan `2px` en el eje Y al pasar el cursor, aumentando la opacidad de los bordes para confirmar la interactividad.
+
+## Shapes
+
+Los bordes están fuertemente redondeados para proyectar un estilo moderno y amigable:
+- **Tarjetas Principales y Dropzones:** Redondeado de `16px`.
+- **Botones, Badges y Campos de Calibración:** Redondeado de `10px` para mantener uniformidad estructural.
+
+## Do's and Don'ts
+
+### Do's
+- Mantener siempre colores con relaciones de contraste superiores a **4.5:1** (WCAG AA).
+- Utilizar fondos translúcidos `rgba` únicamente acompañados de `backdrop-filter: blur(20px)` para evitar interferencias visuales.
+- Demarcar claramente el origen de la recomendación utilizando las etiquetas de campaña (`SP`, `SB`, `SD`) con sus respectivos bordes coloreados y fondos con 8% de opacidad.
+
+### Don'ts
+- **No volver a esquemas oscuros** sin una calibración explícita previa; la consistencia clara del Glassmorphism Claro es el estándar del proyecto.
+- No mezclar más de 4 colores en un mismo componente de reporte para evitar sobrecarga de información.
+- No reducir el tamaño de la tipografía por debajo de `10px` para evitar exclusión de accesibilidad.
