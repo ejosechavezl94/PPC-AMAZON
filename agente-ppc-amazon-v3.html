@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agente PPC — Amazon.es</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fafafa;
+  --bg2: #ffffff;
+  --bg3: #f4f4f5;
+  --bg4: #e4e4e7;
+  --border: #e4e4e7;
+  --border2: #d1d1d6;
+  --text: #09090b;
+  --text2: #71717a;
+  --text3: #a1a1aa;
+  --accent: #f97316;
+  --accent-light: #fff7ed;
+  --accent-border: #fed7aa;
+  --green: #16a34a;
+  --green-light: #f0fdf4;
+  --green-border: #bbf7d0;
+  --red: #dc2626;
+  --red-light: #fef2f2;
+  --red-border: #fecaca;
+  --amber: #d97706;
+  --amber-light: #fffbeb;
+  --amber-border: #fde68a;
+  --blue: #2563eb;
+  --blue-light: #eff6ff;
+  --blue-border: #bfdbfe;
+  --purple: #7c3aed;
+  --purple-light: #f5f3ff;
+  --purple-border: #ddd6fe;
+  --mono: 'Geist Mono', monospace;
+  --sans: 'Inter', sans-serif;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.6; min-height: 100vh; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg3); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* HEADER */
+.header {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 58px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-mark {
+  width: 32px; height: 32px;
+  background: var(--text);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  color: #fff; letter-spacing: -0.02em;
+}
+.logo-name { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: -0.02em; }
+.logo-sep { color: var(--text3); margin: 0 4px; }
+.logo-sub { font-size: 12px; color: var(--text2); }
+.status-pill {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--green-light); border: 1px solid var(--green-border);
+  border-radius: 20px; padding: 4px 12px;
+  font-size: 11px; font-weight: 500; color: var(--green);
+}
+.status-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* NAV */
+.nav-wrap {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+}
+.ntab {
+  padding: 0 16px;
+  height: 44px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 500;
+  color: var(--text2);
+  cursor: pointer;
+  border: none; background: none;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all .15s;
+  letter-spacing: -0.01em;
+}
+.ntab:hover { color: var(--text); }
+.ntab.active { color: var(--text); border-bottom-color: var(--text); }
+.ntab-num { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+.ntab.active .ntab-num { color: var(--accent); }
+
+/* MAIN */
+.main { padding: 28px 32px; max-width: 1240px; margin: 0 auto; }
+.section { display: none; animation: fadeIn .2s ease; }
+.section.active { display: block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+.page-header { margin-bottom: 24px; }
+.page-title { font-size: 20px; font-weight: 600; color: var(--text); letter-spacing: -0.03em; margin-bottom: 4px; }
+.page-sub { font-size: 13px; color: var(--text2); }
+
+/* CARDS */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+}
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.card-label { font-size: 11px; font-weight: 600; color: var(--text2); letter-spacing: 0.06em; text-transform: uppercase; }
+
+/* GRIDS */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.g3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.g4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+
+/* METRIC CARDS */
+.metric {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  transition: box-shadow .15s;
+}
+.metric:hover { box-shadow: var(--shadow-md); }
+.mlabel { font-size: 11px; color: var(--text2); margin-bottom: 8px; font-weight: 500; }
+.mvalue { font-family: var(--mono); font-size: 24px; font-weight: 600; color: var(--text); letter-spacing: -0.03em; }
+.mvalue.ok { color: var(--green); }
+.mvalue.warn { color: var(--amber); }
+.mvalue.bad { color: var(--red); }
+.msub { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+/* SLIDERS */
+.sg { margin-bottom: 20px; }
+.sh { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.slabel { font-size: 12px; color: var(--text2); font-weight: 500; }
+.sval { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--accent); background: var(--accent-light); border: 1px solid var(--accent-border); padding: 1px 8px; border-radius: 5px; }
+input[type=range] { width: 100%; -webkit-appearance: none; height: 4px; background: var(--border2); border-radius: 2px; outline: none; cursor: pointer; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; background: var(--bg2); border: 2px solid var(--text); border-radius: 50%; cursor: pointer; box-shadow: var(--shadow); transition: transform .1s; }
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+/* BUTTONS */
+.btn { font-size: 12px; font-weight: 500; padding: 8px 16px; border-radius: var(--radius-sm); cursor: pointer; border: none; transition: all .15s; letter-spacing: -0.01em; display: inline-flex; align-items: center; gap: 6px; }
+.btn-primary { background: var(--text); color: #fff; }
+.btn-primary:hover { background: #27272a; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.btn-secondary { background: var(--bg2); color: var(--text2); border: 1px solid var(--border2); }
+.btn-secondary:hover { color: var(--text); border-color: var(--text2); }
+.btn-ghost { background: transparent; color: var(--text3); border: 1px solid var(--border); font-size: 11px; padding: 5px 10px; }
+.btn-ghost:hover { color: var(--text); border-color: var(--border2); }
+.btn-danger { background: var(--red-light); color: var(--red); border: 1px solid var(--red-border); }
+.btn-danger:hover { background: #fee2e2; }
+
+/* BADGES */
+.badge { font-family: var(--mono); font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 5px; white-space: nowrap; letter-spacing: 0.02em; }
+.b-ok { background: var(--green-light); color: var(--green); border: 1px solid var(--green-border); }
+.b-warn { background: var(--amber-light); color: var(--amber); border: 1px solid var(--amber-border); }
+.b-bad { background: var(--red-light); color: var(--red); border: 1px solid var(--red-border); }
+.b-add { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue-border); }
+.b-pause { background: var(--purple-light); color: var(--purple); border: 1px solid var(--purple-border); }
+.b-wait { background: var(--bg3); color: var(--text3); border: 1px solid var(--border); }
+
+/* CAMP TAGS */
+.ctag { font-family: var(--mono); font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+.ct-sp { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+.ct-sb { background: var(--blue-light); color: #1d4ed8; border: 1px solid var(--blue-border); }
+.ct-sd { background: var(--purple-light); color: #6d28d9; border: 1px solid var(--purple-border); }
+.ct-exact { background: var(--green-light); color: #15803d; border: 1px solid var(--green-border); }
+.ct-broad { background: var(--amber-light); color: #b45309; border: 1px solid var(--amber-border); }
+.ct-phrase { background: #f0fdfa; color: #0f766e; border: 1px solid #99f6e4; }
+.ct-auto { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); }
+
+/* RULE BADGES */
+.rb { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 5px; white-space: nowrap; text-transform: uppercase; letter-spacing: 0.04em; flex-shrink: 0; margin-top: 1px; }
+.rb-up { background: var(--green-light); color: var(--green); border: 1px solid var(--green-border); }
+.rb-down { background: var(--red-light); color: var(--red); border: 1px solid var(--red-border); }
+.rb-pause { background: var(--amber-light); color: var(--amber); border: 1px solid var(--amber-border); }
+.rb-add { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue-border); }
+.rb-alert { background: var(--purple-light); color: var(--purple); border: 1px solid var(--purple-border); }
+
+/* SELECT */
+select { background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 7px 12px; color: var(--text); font-family: var(--sans); font-size: 12px; outline: none; cursor: pointer; font-weight: 500; }
+select:focus { border-color: var(--text); box-shadow: 0 0 0 3px rgba(9,9,11,0.06); }
+
+/* TEXTAREA */
+textarea { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; color: var(--text); font-family: var(--mono); font-size: 12px; line-height: 1.6; resize: vertical; min-height: 110px; outline: none; transition: border-color .15s; }
+textarea:focus { border-color: var(--text); background: var(--bg2); box-shadow: 0 0 0 3px rgba(9,9,11,0.06); }
+textarea::placeholder { color: var(--text3); }
+
+/* DROP ZONE */
+.dropzone {
+  border: 2px dashed var(--border2);
+  border-radius: var(--radius);
+  padding: 36px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s;
+  margin-bottom: 12px;
+  background: var(--bg3);
+}
+.dropzone:hover { border-color: var(--text); background: var(--bg2); }
+.dropzone.loaded { border-color: var(--green); border-style: solid; background: var(--green-light); }
+.dz-icon { font-size: 24px; margin-bottom: 10px; }
+.dz-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; letter-spacing: -0.01em; }
+.dz-sub { font-size: 12px; color: var(--text2); }
+
+/* FILE INFO */
+.finfo { display: none; background: var(--green-light); border: 1px solid var(--green-border); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 12px; align-items: center; justify-content: space-between; gap: 10px; }
+.finfo.show { display: flex; }
+
+/* DETECTION BANNER */
+.det-banner { border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 12px; display: none; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.det-banner.show { display: flex; }
+.det-ok { background: var(--green-light); border: 1px solid var(--green-border); }
+.det-warn { background: var(--amber-light); border: 1px solid var(--amber-border); }
+.det-text { font-size: 12px; font-weight: 500; }
+.det-btns { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+/* EXEC CARD */
+.exec-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 12px; box-shadow: var(--shadow); display: none; }
+.exec-card.show { display: block; }
+
+/* RESULTS TABLE */
+.tscroll { overflow-x: auto; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+.rtable { width: 100%; border-collapse: collapse; font-size: 12px; }
+.rtable th { font-size: 10px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; white-space: nowrap; background: var(--bg3); }
+.rtable td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.rtable tr:last-child td { border-bottom: none; }
+.rtable tbody tr:hover td { background: var(--bg3); }
+
+/* SUMMARY BOX */
+.sumbox { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px 18px; margin-top: 12px; }
+.sumbox-title { font-size: 11px; font-weight: 600; color: var(--text2); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px; }
+.sum-item { display: flex; gap: 10px; margin-bottom: 8px; font-size: 13px; align-items: flex-start; }
+.sum-num { font-family: var(--mono); color: var(--accent); font-weight: 600; min-width: 18px; flex-shrink: 0; }
+
+/* RULES */
+.rule { display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+.rule:last-child { border-bottom: none; padding-bottom: 0; }
+.rtitle { font-size: 13px; color: var(--text); margin-bottom: 3px; font-weight: 500; letter-spacing: -0.01em; }
+.rdesc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+/* DIVIDER */
+.divider { height: 1px; background: var(--border); margin: 18px 0; }
+
+/* SOP */
+.sop-step { display: flex; gap: 16px; margin-bottom: 20px; align-items: flex-start; }
+.sop-num { font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--text3); background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 3px 7px; flex-shrink: 0; margin-top: 2px; }
+.sop-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; letter-spacing: -0.02em; }
+.sop-desc { font-size: 12px; color: var(--text2); line-height: 1.6; }
+
+/* DIAG BOX */
+.diag-box { border-radius: var(--radius-sm); padding: 14px 16px; margin-top: 12px; border: 1px solid; }
+
+/* CAMP SECTION */
+.camp-row { display: flex; align-items: flex-start; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.camp-row:last-child { border-bottom: none; padding-bottom: 0; }
+.camp-tags { display: flex; gap: 4px; flex-shrink: 0; padding-top: 2px; }
+
+/* KPI ROW */
+.kpi-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.kpi-row:last-child { border-bottom: none; }
+.kpi-label { font-size: 13px; color: var(--text2); }
+.kpi-val { font-family: var(--mono); font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+
+/* PHASE INDICATOR */
+.phase-bar { display: flex; gap: 0; margin-bottom: 20px; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+.phase-item { flex: 1; padding: 10px 14px; font-size: 11px; font-weight: 500; color: var(--text2); border-right: 1px solid var(--border); background: var(--bg3); }
+.phase-item:last-child { border-right: none; }
+.phase-item.active { background: var(--text); color: #fff; }
+.phase-num { font-family: var(--mono); font-size: 10px; opacity: 0.6; display: block; margin-bottom: 2px; }
+
+/* SECTION DIVIDER */
+.sdiv { display: flex; align-items: center; gap: 12px; margin: 20px 0 16px; }
+.sdiv-line { flex: 1; height: 1px; background: var(--border); }
+.sdiv-label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* GOLD RULE */
+.gold-rule { background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 100%); border: 1px solid var(--accent-border); border-radius: var(--radius-sm); padding: 16px 18px; }
+
+/* EMPTY STATE */
+.empty-state { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 13px; }
+
+@media(max-width:768px) {
+  .main { padding: 16px; }
+  .g2,.g3,.g4 { grid-template-columns: 1fr 1fr; }
+  .header,.nav-wrap { padding-left: 16px; padding-right: 16px; }
+  .logo-sub { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">
+    <div class="logo-mark">PPC</div>
+    <span class="logo-name">Agente PPC</span>
+    <span class="logo-sep">/</span>
+    <span class="logo-sub">Amazon.es · SP · SB · SD</span>
+  </div>
+  <div class="status-pill">
+    <span class="status-dot"></span>
+    Activo
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav-wrap">
+  <button class="ntab active" onclick="showTab('config',this)"><span class="ntab-num">01</span> Configuración</button>
+  <button class="ntab" onclick="showTab('analizar',this)"><span class="ntab-num">02</span> Analizar CSV</button>
+  <button class="ntab" onclick="showTab('reglas',this)"><span class="ntab-num">03</span> Reglas</button>
+  <button class="ntab" onclick="showTab('estructura',this)"><span class="ntab-num">04</span> Estructura</button>
+  <button class="ntab" onclick="showTab('sop',this)"><span class="ntab-num">05</span> Rutina semanal</button>
+</nav>
+
+<div class="main">
+
+<!-- ===== 01 CONFIG ===== -->
+<div id="config" class="section active">
+  <div class="page-header">
+    <div class="page-title">Calibra el agente</div>
+    <div class="page-sub">Define tus umbrales reales. El agente los usará para diagnosticar cada keyword.</div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-header"><span class="card-label">Parámetros de negocio</span></div>
+      <div class="sg">
+        <div class="sh"><span class="slabel">Margen antes de PPC</span><span class="sval" id="v-margen">30%</span></div>
+        <input type="range" min="10" max="60" value="30" step="1" oninput="upd('margen',this.value,'%')">
+      </div>
+      <div class="sg">
+        <div class="sh"><span class="slabel">Precio de venta</span><span class="sval" id="v-precio">25€</span></div>
+        <input type="range" min="5" max="200" value="25" step="1" oninput="upd('precio',this.value,'€')">
+      </div>
+      <div class="sg">
+        <div class="sh"><span class="slabel">Budget diario PPC</span><span class="sval" id="v-budget">30€</span></div>
+        <input type="range" min="5" max="200" value="30" step="1" oninput="upd('budget',this.value,'€')">
+      </div>
+      <div class="sg">
+        <div class="sh"><span class="slabel">ACOS objetivo</span><span class="sval" id="v-acos">20%</span></div>
+        <input type="range" min="5" max="50" value="20" step="1" oninput="upd('acos',this.value,'%')">
+      </div>
+      <div class="sg" style="margin-bottom:0">
+        <div class="sh"><span class="slabel">TACOS objetivo</span><span class="sval" id="v-tacos">12%</span></div>
+        <input type="range" min="3" max="30" value="12" step="1" oninput="upd('tacos',this.value,'%')">
+      </div>
+    </div>
+    <div>
+      <div class="g2" style="margin-bottom:12px;">
+        <div class="metric"><div class="mlabel">ACOS máx. tolerable</div><div class="mvalue ok" id="m-acosmax">21%</div><div class="msub">Margen × 0.7</div></div>
+        <div class="metric"><div class="mlabel">CPC máximo</div><div class="mvalue" id="m-cpc">0.50€</div><div class="msub">Precio × ACOS obj.</div></div>
+      </div>
+      <div class="g2" style="margin-bottom:12px;">
+        <div class="metric"><div class="mlabel">Coste máx. / venta</div><div class="mvalue" id="m-coste">5.00€</div><div class="msub">Lo que puedes gastar</div></div>
+        <div class="metric"><div class="mlabel">Ventas / día est.</div><div class="mvalue" id="m-ventas">~6</div><div class="msub">Con este budget</div></div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div class="card-header"><span class="card-label">Diagnóstico</span></div>
+        <div id="diag-box" class="diag-box">
+          <div id="diag" style="font-size:13px;font-weight:500;margin-bottom:4px;"></div>
+          <div id="diag-recom" style="font-size:12px;color:var(--text2);"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 02 ANALIZAR ===== -->
+<div id="analizar" class="section">
+  <div class="page-header">
+    <div class="page-title">Diagnóstico de campañas</div>
+    <div class="page-sub">Sube tu CSV de Amazon → detección automática → análisis completo con acciones concretas.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="card-label">Subir reporte</span></div>
+    <div class="dropzone" id="dz" onclick="document.getElementById('finput').click()">
+      <div class="dz-icon" id="dz-icon">📂</div>
+      <div class="dz-title" id="dz-title">Haz clic o arrastra tu CSV aquí</div>
+      <div class="dz-sub" id="dz-sub">Formatos: .csv · .txt — Search Term, Campaign, Keyword o Product Report</div>
+      <input type="file" id="finput" accept=".csv,.txt" style="display:none" onchange="readFile(this)">
+    </div>
+
+    <div class="finfo" id="finfo">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:14px;">✓</span>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--green);" id="fname"></div>
+          <div style="font-size:11px;color:var(--text2);" id="frows"></div>
+        </div>
+      </div>
+      <button class="btn btn-ghost" onclick="resetFile()">✕ Quitar</button>
+    </div>
+
+    <div class="det-banner" id="det-banner">
+      <div><div class="det-text" id="det-text"></div><div style="font-size:11px;color:var(--text2);margin-top:2px;" id="det-sub"></div></div>
+      <div class="det-btns">
+        <span style="font-size:11px;color:var(--text2);">¿Incorrecto?</span>
+        <select id="tipo-override">
+          <option value="auto">Automático</option>
+          <option value="search_term">Search Term (SP)</option>
+          <option value="campaign">Campaign Performance</option>
+          <option value="keyword">Keyword Report</option>
+          <option value="product">Product Report</option>
+          <option value="sb">Sponsored Brands</option>
+          <option value="sd">Sponsored Display</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="sdiv"><div class="sdiv-line"></div><div class="sdiv-label">O pega manualmente</div><div class="sdiv-line"></div></div>
+    <textarea id="csv-data" placeholder="Pega aquí el contenido del CSV..."></textarea>
+
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="analizarDatos()">▶ Analizar campañas</button>
+      <button class="btn btn-secondary" onclick="cargarEjemplo('sp')">Ejemplo SP</button>
+      <button class="btn btn-secondary" onclick="cargarEjemplo('sb')">Ejemplo SB</button>
+      <button class="btn btn-secondary" onclick="cargarEjemplo('sd')">Ejemplo SD</button>
+      <button class="btn btn-ghost" onclick="resetFile()">Limpiar</button>
+    </div>
+  </div>
+
+  <!-- RESUMEN EJECUTIVO -->
+  <div class="exec-card" id="exec-card">
+    <div class="card-header"><span class="card-label">Resumen ejecutivo</span></div>
+    <div class="g4" id="exec-metrics" style="margin-bottom:16px;"></div>
+    <div class="divider"></div>
+    <div id="exec-texto" style="font-size:13px;color:var(--text2);line-height:1.7;"></div>
+  </div>
+
+  <!-- TABLA -->
+  <div class="card" id="result-card" style="display:none;">
+    <div class="card-header">
+      <span class="card-label" id="result-title">Análisis detallado</span>
+    </div>
+    <div class="tscroll">
+      <table class="rtable">
+        <thead>
+          <tr>
+            <th>Término / Target</th><th>Tipo</th><th>Match</th>
+            <th>Imps.</th><th>Clicks</th><th>CTR</th>
+            <th>ACOS</th><th>Spend</th><th>Ventas</th>
+            <th>Estado</th><th>Acción recomendada</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="sumbox" id="sumbox" style="display:none;">
+      <div class="sumbox-title">Prioridades esta semana — en este orden</div>
+      <div id="prioridades"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 03 REGLAS ===== -->
+<div id="reglas" class="section">
+  <div class="page-header">
+    <div class="page-title">Reglas del agente</div>
+    <div class="page-sub">Lógica de decisión aplicada al analizar cada línea del CSV.</div>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="card-header"><span class="card-label">Gestión de bids</span></div>
+        <div class="rule"><span class="rb rb-up">Subir +15%</span><div><div class="rtitle">ACOS &lt; objetivo + 2 ventas en 7 días</div><div class="rdesc">Convierte bien y tiene margen. Ganar posición ahora es rentable.</div></div></div>
+        <div class="rule"><span class="rb rb-down">Bajar -20%</span><div><div class="rtitle">ACOS &gt; máximo tolerable 7+ días consecutivos</div><div class="rdesc">Cada click cuesta más de lo que devuelve. Reducir inmediato.</div></div></div>
+        <div class="rule"><span class="rb rb-pause">Revisar bid</span><div><div class="rtitle">+20 clicks sin ventas en 14 días</div><div class="rdesc">Problema de conversión o relevancia. Bajar bid al mínimo o pausar.</div></div></div>
+        <div class="rule"><span class="rb rb-pause">Sin impresiones</span><div><div class="rtitle">0 impresiones en 14 días</div><div class="rdesc">Bid demasiado bajo o keyword irrelevante. Subir bid +30% o sustituir.</div></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-label">Campañas — nivel macro</span></div>
+        <div class="rule"><span class="rb rb-up">Escalar</span><div><div class="rtitle">Campaña AUTO con ACOS &lt; objetivo y ventas estables</div><div class="rdesc">Migrar winners a manual exacta. Más control, menos desperdicio de budget.</div></div></div>
+        <div class="rule"><span class="rb rb-alert">Alerta budget</span><div><div class="rtitle">Budget agotado antes de las 18:00</div><div class="rdesc">Pierdes tráfico de tarde-noche. Aumentar o redistribuir entre campañas ganadoras.</div></div></div>
+        <div class="rule"><span class="rb rb-down">TACOS alto</span><div><div class="rtitle">TACOS total &gt; objetivo definido en configuración</div><div class="rdesc">Problema estructural. Revisar antes de tocar bids.</div></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-header"><span class="card-label">Keywords — añadir y negar</span></div>
+        <div class="rule"><span class="rb rb-add">Añadir exacta</span><div><div class="rtitle">Search term con 2+ ventas no está como keyword exacta</div><div class="rdesc">Winner identificado. Mover a campaña manual exacta con bid = CPC máximo configurado.</div></div></div>
+        <div class="rule"><span class="rb rb-pause">Negar exacta</span><div><div class="rtitle">Search term con +15 clicks y 0 ventas en 30 días</div><div class="rdesc">Añadir como negativa exacta. Evita seguir quemando budget.</div></div></div>
+        <div class="rule"><span class="rb rb-down">CTR bajo</span><div><div class="rtitle">CTR &lt; 0.3% con +500 impresiones</div><div class="rdesc">Problema de relevancia en listing o keyword genérica. Revisar título e imagen principal.</div></div></div>
+        <div class="rule"><span class="rb rb-add">Phrase → exacta</span><div><div class="rtitle">Keyword phrase con 3+ ventas y ACOS &lt; objetivo</div><div class="rdesc">Duplicar en exacta para capturar el término con más control y mejor ACOS.</div></div></div>
+      </div>
+      <div class="gold-rule">
+        <div style="font-size:11px;font-weight:600;color:var(--amber);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;">Regla de oro — sin excepciones</div>
+        <div style="font-size:13px;color:var(--text);line-height:1.8;">
+          Máximo <strong>4 decisiones por sesión.</strong><br>
+          Los cambios necesitan <strong>5-7 días</strong> de datos para evaluarse.<br>
+          Actuar con impaciencia es el error más costoso en PPC.
+        </div>
+        <div style="font-size:12px;color:var(--text2);margin-top:8px;">Documenta siempre: fecha · keyword · qué cambiaste · por qué.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 04 ESTRUCTURA ===== -->
+<div id="estructura" class="section">
+  <div class="page-header">
+    <div class="page-title">Estructura de campañas</div>
+    <div class="page-sub">Arquitectura recomendada para Amazon.es FBA desde cero. Probada y escalable.</div>
+  </div>
+
+  <div class="phase-bar">
+    <div class="phase-item active"><span class="phase-num">Fase 1</span>Lanzamiento</div>
+    <div class="phase-item"><span class="phase-num">Fase 2</span>Optimización</div>
+    <div class="phase-item"><span class="phase-num">Fase 3</span>Escala</div>
+  </div>
+
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="card-header"><span class="card-label">Fase 1 — Semanas 1-4</span></div>
+        <div class="camp-row">
+          <div class="camp-tags"><span class="ctag ct-sp">SP</span><span class="ctag ct-auto">AUTO</span></div>
+          <div><div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;">Campaña automática</div><div style="font-size:12px;color:var(--text2);">Budget: 40% del total. No toques bids mínimo 14 días.</div></div>
+        </div>
+        <div class="camp-row">
+          <div class="camp-tags"><span class="ctag ct-sp">SP</span><span class="ctag ct-broad">BROAD</span></div>
+          <div><div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;">3-5 keywords principales</div><div style="font-size:12px;color:var(--text2);">Budget: 35% del total. Ampliar alcance con negative harvesting semanal.</div></div>
+        </div>
+        <div class="camp-row">
+          <div class="camp-tags"><span class="ctag ct-sp">SP</span><span class="ctag ct-exact">EXACTA</span></div>
+          <div><div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;">Keyword principal</div><div style="font-size:12px;color:var(--text2);">Budget: 25% del total. Ganar velocidad desde día 1.</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-label">Fase 2 — Semana 4+</span></div>
+        <div style="font-size:13px;color:var(--text);line-height:2.2;">
+          <div style="display:flex;gap:10px;"><span style="color:var(--text3);font-family:var(--mono);font-size:11px;margin-top:2px;">①</span><span>Exportar Search Term Report semanal</span></div>
+          <div style="display:flex;gap:10px;"><span style="color:var(--text3);font-family:var(--mono);font-size:11px;margin-top:2px;">②</span><span>Aplicar reglas del agente (pestaña 03)</span></div>
+          <div style="display:flex;gap:10px;"><span style="color:var(--text3);font-family:var(--mono);font-size:11px;margin-top:2px;">③</span><span>Mover winners de auto → manual exacta</span></div>
+          <div style="display:flex;gap:10px;"><span style="color:var(--text3);font-family:var(--mono);font-size:11px;margin-top:2px;">④</span><span>Añadir negativas en campaña auto y broad</span></div>
+          <div style="display:flex;gap:10px;"><span style="color:var(--text3);font-family:var(--mono);font-size:11px;margin-top:2px;">⑤</span><span>Redistribuir budget hacia lo que convierte</span></div>
+          <div style="display:flex;gap:10px;"><span style="color:var(--text3);font-family:var(--mono);font-size:11px;margin-top:2px;">⑥</span><span>Evaluar activar SB si tienes Brand Registry</span></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-header"><span class="card-label">Cuándo activar SB y SD</span></div>
+        <div class="camp-row">
+          <div class="camp-tags"><span class="ctag ct-sb">SB</span></div>
+          <div><div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;">Sponsored Brands</div><div style="font-size:12px;color:var(--text2);">Brand Registry + 3 productos + SP con ACOS estable. Objetivo: visibilidad, no conversión directa.</div></div>
+        </div>
+        <div class="camp-row">
+          <div class="camp-tags"><span class="ctag ct-sd">SD</span></div>
+          <div><div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;">Sponsored Display</div><div style="font-size:12px;color:var(--text2);">SP estabilizado. Retargeting de visitantes. ACOS más alto — canal de apoyo, no principal.</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-label">Nomenclatura estándar</span></div>
+        <div style="font-family:var(--mono);font-size:12px;line-height:2.4;">
+          <div><span style="color:var(--accent);">SP_AUTO_[PRODUCTO]_001</span></div>
+          <div><span style="color:var(--accent);">SP_MAN-B_[PRODUCTO]_001</span></div>
+          <div><span style="color:var(--accent);">SP_MAN-E_[PRODUCTO]_001</span></div>
+          <div><span style="color:var(--accent);">SP_MAN-P_[PRODUCTO]_001</span></div>
+          <div><span style="color:var(--blue);">SB_BRAND_[PRODUCTO]_001</span></div>
+          <div><span style="color:var(--purple);">SD_RETARGET_[PRODUCTO]_001</span></div>
+        </div>
+      </div>
+      <div class="card" style="border-color:var(--red-border);background:var(--red-light);">
+        <div class="card-header"><span class="card-label" style="color:var(--red);">Errores que cuestan dinero</span></div>
+        <div style="font-size:13px;color:#7f1d1d;line-height:2.1;">
+          <div>✗ Pausar campañas los primeros 30 días</div>
+          <div>✗ Bajar budget cuando el ACOS está alto</div>
+          <div>✗ Activar SB antes de SP estabilizado</div>
+          <div>✗ Tocar bids sin datos de 7+ días</div>
+          <div>✗ Mezclar productos distintos en una campaña</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 05 RUTINA ===== -->
+<div id="sop" class="section">
+  <div class="page-header">
+    <div class="page-title">Rutina semanal</div>
+    <div class="page-sub">30 minutos cada lunes. Proceso completo y repetible.</div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-header"><span class="card-label">Proceso — cada lunes por la mañana</span></div>
+      <div class="sop-step"><div class="sop-num">01</div><div><div class="sop-title">Descargar reportes <span style="font-size:11px;color:var(--text3);font-weight:400;">5 min</span></div><div class="sop-desc">Seller Central → Publicidad → Informes de campañas. Rango: últimos 7 días. Descargar: Search Term Report + Campaign Performance.</div></div></div>
+      <div class="sop-step"><div class="sop-num">02</div><div><div class="sop-title">Revisar TACOS global <span style="font-size:11px;color:var(--text3);font-weight:400;">3 min</span></div><div class="sop-desc">Gasto PPC ÷ Ventas totales. Si supera tu objetivo, hay un problema estructural — no toques bids hasta identificarlo.</div></div></div>
+      <div class="sop-step"><div class="sop-num">03</div><div><div class="sop-title">Subir CSV y analizar <span style="font-size:11px;color:var(--text3);font-weight:400;">10 min</span></div><div class="sop-desc">Sube el Search Term Report en la pestaña 02. Lee el resumen ejecutivo primero. El agente te dice qué hacer.</div></div></div>
+      <div class="sop-step"><div class="sop-num">04</div><div><div class="sop-title">Ejecutar máximo 4 acciones <span style="font-size:11px;color:var(--text3);font-weight:400;">7 min</span></div><div class="sop-desc">Sigue el orden de prioridades. No más de 4 cambios por sesión. Documenta cada uno: fecha, keyword, cambio y motivo.</div></div></div>
+      <div class="sop-step" style="margin-bottom:0"><div class="sop-num">05</div><div><div class="sop-title">Registrar KPIs <span style="font-size:11px;color:var(--text3);font-weight:400;">5 min</span></div><div class="sop-desc">ACOS, TACOS, spend total, ventas totales, acciones tomadas. Compara con semana anterior.</div></div></div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-header"><span class="card-label">KPIs a revisar cada semana</span></div>
+        <div class="kpi-row"><span class="kpi-label">TACOS total</span><span class="kpi-val" style="background:var(--green-light);color:var(--green);">&lt; 15%</span></div>
+        <div class="kpi-row"><span class="kpi-label">ACOS campañas activas</span><span class="kpi-val" style="background:var(--amber-light);color:var(--amber);">= objetivo</span></div>
+        <div class="kpi-row"><span class="kpi-label">CTR medio</span><span class="kpi-val" style="background:var(--green-light);color:var(--green);">&gt; 0.35%</span></div>
+        <div class="kpi-row"><span class="kpi-label">Conversion rate</span><span class="kpi-val" style="background:var(--green-light);color:var(--green);">&gt; 10%</span></div>
+        <div class="kpi-row"><span class="kpi-label">% budget gastado</span><span class="kpi-val" style="background:var(--amber-light);color:var(--amber);">80-100%</span></div>
+        <div class="kpi-row"><span class="kpi-label">Score de salud</span><span class="kpi-val" style="background:var(--green-light);color:var(--green);">&gt; 70/100</span></div>
+      </div>
+      <div class="card" style="margin-top:0">
+        <div class="card-header"><span class="card-label">Score de salud — cómo interpretarlo</span></div>
+        <div class="kpi-row"><span class="kpi-val" style="background:var(--green-light);color:var(--green);">80-100</span><span class="kpi-label" style="margin-left:10px;">Campañas sanas — mantener y escalar</span></div>
+        <div class="kpi-row"><span class="kpi-val" style="background:var(--amber-light);color:var(--amber);">50-79</span><span class="kpi-label" style="margin-left:10px;">Optimización necesaria esta semana</span></div>
+        <div class="kpi-row"><span class="kpi-val" style="background:var(--red-light);color:var(--red);">0-49</span><span class="kpi-label" style="margin-left:10px;">Problema grave — revisar estructura completa</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+const S = {margen:30,precio:25,budget:30,acos:20,tacos:12};
+let csvRaw='', detectedType='unknown';
+
+function showTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function upd(k,v,u){
+  S[k]=parseFloat(v);
+  document.getElementById('v-'+k).textContent=v+u;
+  recalc();
+}
+
+function recalc(){
+  const acosMax=(S.margen*0.7).toFixed(0);
+  const cpc=(S.acos/100*S.precio).toFixed(2);
+  const ventas=Math.round(S.budget/(S.acos/100*S.precio));
+  document.getElementById('m-acosmax').textContent=acosMax+'%';
+  document.getElementById('m-cpc').textContent=cpc+'€';
+  document.getElementById('m-coste').textContent=cpc+'€';
+  document.getElementById('m-ventas').textContent='~'+ventas;
+  const el=document.getElementById('m-acosmax');
+  el.className='mvalue'+(acosMax>=25?' ok':acosMax>=15?' warn':' bad');
+  let diag='',rec='',color='',bg='',border='';
+  if(S.margen<20){diag='⚠ Margen muy ajustado';rec='Con menos del 20% antes de PPC es muy difícil ser rentable. Revisa precio o costes.';color='var(--red)';bg='var(--red-light)';border='var(--red-border)';}
+  else if(S.margen<30){diag='Margen moderado';rec='El PPC te dejará margen justo. Necesitas un ACOS muy controlado.';color='var(--amber)';bg='var(--amber-light)';border='var(--amber-border)';}
+  else if(S.margen<45){diag='✓ Buen margen';rec='Tienes colchón suficiente para invertir en PPC durante el lanzamiento.';color='var(--green)';bg='var(--green-light)';border='var(--green-border)';}
+  else{diag='✓ Margen excelente';rec='Mucha flexibilidad. Puedes ser agresivo en PPC y escalar rápido.';color='var(--green)';bg='var(--green-light)';border='var(--green-border)';}
+  const box=document.getElementById('diag-box');
+  box.style.background=bg; box.style.borderColor=border;
+  document.getElementById('diag').style.color=color;
+  document.getElementById('diag').textContent=diag;
+  document.getElementById('diag-recom').textContent=rec;
+}
+
+function readFile(input){
+  const file=input.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    csvRaw=e.target.result;
+    document.getElementById('csv-data').value=csvRaw;
+    const lines=csvRaw.split('\n').filter(l=>l.trim()).length;
+    document.getElementById('fname').textContent=file.name;
+    document.getElementById('frows').textContent=lines+' filas detectadas';
+    document.getElementById('finfo').classList.add('show');
+    setDZLoaded(file.name);
+    detectType(csvRaw);
+  };
+  reader.readAsText(file,'UTF-8');
+}
+
+function setDZLoaded(name){
+  const dz=document.getElementById('dz');
+  dz.classList.add('loaded');
+  document.getElementById('dz-icon').textContent='✓';
+  document.getElementById('dz-title').textContent='Archivo cargado — listo para analizar';
+  document.getElementById('dz-sub').textContent=name;
+}
+
+function resetFile(){
+  csvRaw='';
+  document.getElementById('csv-data').value='';
+  document.getElementById('finput').value='';
+  document.getElementById('finfo').classList.remove('show');
+  const dz=document.getElementById('dz');
+  dz.className='dropzone';
+  document.getElementById('dz-icon').textContent='📂';
+  document.getElementById('dz-title').textContent='Haz clic o arrastra tu CSV aquí';
+  document.getElementById('dz-sub').textContent='Formatos: .csv · .txt — Search Term, Campaign, Keyword o Product Report';
+  document.getElementById('det-banner').classList.remove('show');
+  document.getElementById('result-card').style.display='none';
+  document.getElementById('exec-card').classList.remove('show');
+  detectedType='unknown';
+}
+
+function detectType(csv){
+  const header=csv.split('\n')[0].toLowerCase();
+  let tipo='unknown',label='',sub='',isWarn=false;
+  if(header.includes('search term')||header.includes('customer search term')){
+    tipo='search_term';label='✓ Detectado: Search Term Report (Sponsored Products)';sub='Análisis de términos de búsqueda reales';
+  } else if(header.includes('campaign name')&&header.includes('impressions')&&!header.includes('search term')){
+    tipo='campaign';label='✓ Detectado: Campaign Performance Report';sub='Análisis de rendimiento por campaña completa';
+  } else if(header.includes('keyword')&&header.includes('match type')){
+    tipo='keyword';label='✓ Detectado: Keyword Report (SP)';sub='Análisis de keywords y match types';
+  } else if(header.includes('advertised')||header.includes('asin')){
+    tipo='product';label='✓ Detectado: Advertised Product Report';sub='Análisis de rendimiento por ASIN';
+  } else if(header.includes('brand')||header.includes('headline')){
+    tipo='sb';label='✓ Detectado: Sponsored Brands Report';sub='Análisis de campañas SB';
+  } else if(header.includes('display')||header.includes('audience')){
+    tipo='sd';label='✓ Detectado: Sponsored Display Report';sub='Análisis de campañas SD';
+  } else {
+    tipo='search_term';label='⚠ Tipo no detectado — usando Search Term por defecto';sub='Si es incorrecto, selecciona el tipo en el desplegable';isWarn=true;
+  }
+  detectedType=tipo;
+  const banner=document.getElementById('det-banner');
+  banner.className='det-banner '+(isWarn?'det-warn':'det-ok')+' show';
+  const dt=document.getElementById('det-text');
+  dt.textContent=label;
+  dt.style.color=isWarn?'var(--amber)':'var(--green)';
+  document.getElementById('det-sub').textContent=sub;
+}
+
+function cargarEjemplo(tipo){
+  let data='';
+  if(tipo==='sp'){
+    data=`Keyword,Search Term,Impressions,Clicks,CTR,CPC,Spend,Sales,Orders,ACOS,Match Type
+bolígrafo gel,boligrafo gel negro,3240,87,2.68%,0.38,33.06,124.50,8,26.55%,Broad
+bolígrafo gel,boli gel negro punta fina,1890,54,2.86%,0.31,16.74,78.00,5,21.46%,Broad
+bolígrafo gel,boligrafo gel azul pack,1420,39,2.75%,0.29,11.31,0,0,-,Broad
+bolígrafo gel,rotulador gel escribir,980,28,2.86%,0.26,7.28,26.00,2,28.00%,Broad
+bolígrafo gel,boli tinta gel suave,760,22,2.89%,0.24,5.28,0,0,-,Broad
+bolígrafo gel,boligrafo gel premium,2100,8,0.38%,0.44,3.52,0,0,-,Broad
+bolígrafo gel,boligrafo gel recargable,1650,45,2.73%,0.35,15.75,52.00,4,30.29%,Broad
+bolígrafo gel,boligrafo gel tinta negra,2800,12,0.43%,0.42,5.04,0,0,-,Broad
+bolígrafo gel,boli gel negro 0.5,1100,31,2.82%,0.33,10.23,39.00,3,26.23%,Broad
+bolígrafo gel,boligrafo gel pack 10,890,24,2.70%,0.28,6.72,52.00,4,12.92%,Broad
+bolígrafo gel,boligrafo gel tinta japonesa,1780,48,2.70%,0.36,17.28,104.00,6,16.62%,Broad
+bolígrafo gel,boligrafo gel niños colegio,1230,33,2.68%,0.30,9.90,26.00,2,38.08%,Broad
+bolígrafo gel,boli gel profesional,870,19,2.18%,0.32,6.08,39.00,3,15.59%,Broad
+bolígrafo gel,set boligrafos gel colores,4200,6,0.14%,0.38,2.28,0,0,-,Broad`;
+  } else if(tipo==='sb'){
+    data=`Campaign Name,Ad Group,Keyword,Match Type,Impressions,Clicks,CTR,CPC,Spend,Sales,Orders,ACOS
+SB_BRAND_BOLI_001,Grupo Principal,bolígrafo gel premium,Exact,8900,210,2.36%,0.52,109.20,420.00,22,26.00%
+SB_BRAND_BOLI_001,Grupo Principal,boligrafo gel calidad,Broad,5600,98,1.75%,0.44,43.12,156.00,10,27.64%
+SB_BRAND_BOLI_001,Grupo Principal,mejor boligrafo gel,Phrase,3200,45,1.41%,0.38,17.10,0,0,-
+SB_BRAND_BOLI_001,Grupo Principal,papelería premium oficina,Broad,12400,89,0.72%,0.31,27.59,0,0,-
+SB_BRAND_BOLI_001,Grupo Secundario,boli tinta gel suave,Exact,2100,67,3.19%,0.41,27.47,91.00,7,30.19%`;
+  } else {
+    data=`Campaign Name,Ad Group,Targeting,Impressions,Clicks,CTR,CPC,Spend,Sales,Orders,ACOS
+SD_RETARGET_BOLI_001,Retargeting,Views remarketing,45000,320,0.71%,0.18,57.60,182.00,12,31.65%
+SD_RETARGET_BOLI_001,Retargeting,Product targeting ASIN,12000,89,0.74%,0.22,19.58,52.00,4,37.65%
+SD_RETARGET_BOLI_001,Audiencias,Lifestyle shoppers,78000,210,0.27%,0.15,31.50,26.00,2,121.15%
+SD_RETARGET_BOLI_001,Audiencias,In-market office supplies,34000,145,0.43%,0.19,27.55,65.00,5,42.38%`;
+  }
+  document.getElementById('csv-data').value=data;
+  csvRaw=data;
+  setDZLoaded('ejemplo-'+tipo+'.csv (datos de prueba)');
+  document.getElementById('finfo').classList.add('show');
+  document.getElementById('fname').textContent='ejemplo-'+tipo+'.csv';
+  document.getElementById('frows').textContent=data.split('\n').filter(l=>l.trim()).length+' filas';
+  detectType(data);
+}
+
+function analizarDatos(){
+  const raw=document.getElementById('csv-data').value.trim()||csvRaw.trim();
+  if(!raw){alert('Primero sube un CSV o carga un ejemplo.');return;}
+  const override=document.getElementById('tipo-override').value;
+  const tipo=override!=='auto'?override:detectedType;
+  const lines=raw.split('\n').filter(l=>l.trim());
+  if(lines.length<2){alert('El archivo parece vacío o solo tiene encabezado.');return;}
+  const acosMax=S.margen*0.7, acosObj=S.acos;
+  const rows=[];
+  let totalSpend=0,totalSales=0,totalClicks=0,totalImps=0,totalOrders=0;
+  const prio={anadir:[],negar:[],bajar:[],subir:[],ctr:[]};
+  for(let i=1;i<lines.length;i++){
+    const c=lines[i].split(',').map(s=>s.trim().replace(/%/g,''));
+    if(c.length<6)continue;
+    let term='',matchType='',imps=0,clicks=0,ctr=0,cpc=0,spend=0,sales=0,orders=0,acos=0,hasAcos=false,campTipo='SP';
+    if(tipo==='search_term'){
+      term=c[1]||c[0]||'Término '+i; matchType=c[10]||'Broad';
+      imps=parseFloat(c[2])||0; clicks=parseFloat(c[3])||0; ctr=parseFloat(c[4])||0;
+      cpc=parseFloat(c[5])||0; spend=parseFloat(c[6])||0; sales=parseFloat(c[7])||0;
+      orders=parseFloat(c[8])||0; acos=parseFloat(c[9])||0;
+      hasAcos=c[9]&&c[9]!=='-'&&c[9]!==''&&orders>0; campTipo='SP';
+    } else if(tipo==='sb'){
+      term=c[2]||'Keyword '+i; matchType=c[3]||'—';
+      imps=parseFloat(c[4])||0; clicks=parseFloat(c[5])||0; ctr=parseFloat(c[6])||0;
+      cpc=parseFloat(c[7])||0; spend=parseFloat(c[8])||0; sales=parseFloat(c[9])||0;
+      orders=parseFloat(c[10])||0; acos=parseFloat(c[11])||0;
+      hasAcos=c[11]&&c[11]!=='-'&&c[11]!==''&&orders>0; campTipo='SB';
+    } else if(tipo==='sd'){
+      term=c[2]||'Target '+i; matchType='Audience';
+      imps=parseFloat(c[3])||0; clicks=parseFloat(c[4])||0; ctr=parseFloat(c[5])||0;
+      cpc=parseFloat(c[6])||0; spend=parseFloat(c[7])||0; sales=parseFloat(c[8])||0;
+      orders=parseFloat(c[9])||0; acos=parseFloat(c[10])||0;
+      hasAcos=c[10]&&c[10]!=='-'&&c[10]!==''&&orders>0; campTipo='SD';
+    } else {
+      term=c[1]||c[0]||'Fila '+i; matchType=c[10]||'—';
+      imps=parseFloat(c[2])||0; clicks=parseFloat(c[3])||0; ctr=parseFloat(c[4])||0;
+      cpc=parseFloat(c[5])||0; spend=parseFloat(c[6])||0; sales=parseFloat(c[7])||0;
+      orders=parseFloat(c[8])||0; acos=parseFloat(c[9])||0;
+      hasAcos=c[9]&&c[9]!=='-'&&c[9]!==''&&orders>0; campTipo='SP';
+    }
+    totalSpend+=spend; totalSales+=sales; totalClicks+=clicks; totalImps+=imps; totalOrders+=orders;
+    let estado='',accion='',badgeClass='';
+    if(!hasAcos||orders===0){
+      if(clicks>=20){estado='Negar';badgeClass='b-pause';accion='Sin ventas con '+clicks+' clicks. Añadir como negativa exacta.';prio.negar.push(term);}
+      else if(imps>500&&ctr<0.3){estado='CTR bajo';badgeClass='b-warn';accion='CTR '+ctr.toFixed(2)+'% con '+imps.toLocaleString()+' imps. Revisar relevancia del listing.';prio.ctr.push(term);}
+      else if(imps===0){estado='Sin imps.';badgeClass='b-wait';accion='Sin impresiones. Bid posiblemente demasiado bajo.';}
+      else{estado='Esperar';badgeClass='b-wait';accion='Datos insuficientes ('+clicks+' clicks). Mínimo 20 clicks para evaluar.';}
+    } else if(acos>acosMax){
+      estado='Bajar bid';badgeClass='b-bad';accion='ACOS '+acos.toFixed(1)+'% supera máximo ('+acosMax.toFixed(0)+'%). Reducir bid -20%.';prio.bajar.push(term);
+    } else if(acos<=acosObj&&orders>=2){
+      estado='Subir bid';badgeClass='b-ok';accion='ACOS '+acos.toFixed(1)+'% — excelente. '+orders+' ventas. Subir bid +15%. Añadir como exacta si no está.';prio.subir.push(term);if(orders>=2)prio.anadir.push(term);
+    } else if(acos<=acosMax){
+      estado='OK';badgeClass='b-ok';accion='ACOS '+acos.toFixed(1)+'% dentro de rango. Mantener y revisar en 7 días.';
+    } else {
+      estado='Revisar';badgeClass='b-warn';accion='ACOS limítrofe. Monitorear esta semana antes de actuar.';
+    }
+    rows.push({term,campTipo,matchType,imps,clicks,ctr,cpc,spend,sales,orders,acos:hasAcos?acos:null,estado,accion,badgeClass});
+  }
+  let score=100;
+  const tacosReal=totalSales>0?(totalSpend/totalSales)*100:0;
+  if(tacosReal>S.tacos*1.5)score-=30; else if(tacosReal>S.tacos)score-=15;
+  score-=Math.round((rows.length>0?prio.negar.length/rows.length:0)*40);
+  score-=Math.round((rows.length>0?prio.ctr.length/rows.length:0)*20);
+  score=Math.max(0,Math.min(100,score));
+  const scoreColor=score>=80?'var(--green)':score>=50?'var(--amber)':'var(--red)';
+  const scoreBg=score>=80?'var(--green-light)':score>=50?'var(--amber-light)':'var(--red-light)';
+  const scoreBorder=score>=80?'var(--green-border)':score>=50?'var(--amber-border)':'var(--red-border)';
+  const scoreLabel=score>=80?'Campañas sanas':score>=50?'Optimizar':' Problema grave';
+  const ctr_medio=totalClicks>0&&totalImps>0?(totalClicks/totalImps*100).toFixed(2):'—';
+  const convRate=totalClicks>0&&totalOrders>0?(totalOrders/totalClicks*100).toFixed(1):'—';
+  const acosTotal=totalSales>0?(totalSpend/totalSales*100).toFixed(1):'—';
+  document.getElementById('exec-metrics').innerHTML=`
+    <div class="metric" style="border-color:${scoreBorder};background:${scoreBg};"><div class="mlabel">Score de salud</div><div class="mvalue" style="color:${scoreColor};">${score}<span style="font-size:14px;font-weight:400;">/100</span></div><div class="msub">${scoreLabel}</div></div>
+    <div class="metric"><div class="mlabel">ACOS global</div><div class="mvalue ${acosTotal!=='—'&&parseFloat(acosTotal)>S.acos*1.3?'bad':acosTotal!=='—'&&parseFloat(acosTotal)<=S.acos?'ok':'warn'}">${acosTotal}%</div><div class="msub">Objetivo: ${S.acos}%</div></div>
+    <div class="metric"><div class="mlabel">Spend total</div><div class="mvalue">${totalSpend.toFixed(2)}€</div><div class="msub">${totalOrders} ventas PPC</div></div>
+    <div class="metric"><div class="mlabel">Conv. rate</div><div class="mvalue ${convRate!=='—'&&parseFloat(convRate)>=10?'ok':convRate!=='—'&&parseFloat(convRate)>=5?'warn':'bad'}">${convRate}%</div><div class="msub">CTR: ${ctr_medio}%</div></div>`;
+  let execTexto='';
+  if(score>=80)execTexto='Campañas en buen estado. El gasto está bajo control y hay keywords que convierten bien. Prioridad esta semana: escalar los winners añadiéndolos como exactas.';
+  else if(score>=50)execTexto='Campañas con margen de mejora. Hay keywords quemando presupuesto sin retorno. Prioridad: negar los términos sin conversión antes de tocar cualquier bid.';
+  else execTexto='Problema detectado. El gasto supera lo que las campañas devuelven. Antes de seguir invirtiendo, pausa las keywords con peor rendimiento y revisa la estructura de campañas.';
+  if(prio.negar.length>0)execTexto+=' Se han identificado '+prio.negar.length+' términos que deben negarse esta semana.';
+  if(prio.anadir.length>0)execTexto+=' Hay '+prio.anadir.length+' winner(s) para mover a manual exacta.';
+  document.getElementById('exec-texto').textContent=execTexto;
+  document.getElementById('exec-card').classList.add('show');
+  const mt=c=>c.toLowerCase().includes('exact')?'ct-exact':c.toLowerCase().includes('phrase')?'ct-phrase':c.toLowerCase().includes('broad')?'ct-broad':'ct-auto';
+  document.getElementById('tbody').innerHTML=rows.map(r=>`
+    <tr>
+      <td style="font-size:12px;font-weight:500;color:var(--text);max-width:180px;">${r.term}</td>
+      <td><span class="ctag ${r.campTipo==='SP'?'ct-sp':r.campTipo==='SB'?'ct-sb':'ct-sd'}">${r.campTipo}</span></td>
+      <td><span class="ctag ${mt(r.matchType)}">${r.matchType||'—'}</span></td>
+      <td style="font-family:var(--mono);font-size:11px;color:var(--text2);">${r.imps.toLocaleString()}</td>
+      <td style="font-family:var(--mono);font-size:11px;color:var(--text2);">${r.clicks}</td>
+      <td style="font-family:var(--mono);font-size:11px;color:${parseFloat(r.ctr)<0.3&&r.imps>500?'var(--amber)':'var(--text2)'};">${r.ctr.toFixed(2)}%</td>
+      <td style="font-family:var(--mono);font-size:12px;font-weight:600;color:${r.acos===null?'var(--text3)':r.acos>S.margen*0.7?'var(--red)':r.acos<=S.acos?'var(--green)':'var(--amber)'};">${r.acos!==null?r.acos.toFixed(1)+'%':'—'}</td>
+      <td style="font-family:var(--mono);font-size:11px;color:var(--text2);">${r.spend.toFixed(2)}€</td>
+      <td style="font-family:var(--mono);font-size:11px;color:var(--text2);">${r.sales.toFixed(2)}€</td>
+      <td><span class="badge ${r.badgeClass}">${r.estado}</span></td>
+      <td style="font-size:12px;color:var(--text2);min-width:200px;">${r.accion}</td>
+    </tr>`).join('');
+  document.getElementById('result-title').textContent='Análisis detallado — '+rows.length+' términos';
+  document.getElementById('result-card').style.display='block';
+  let ph='';let n=1;
+  if(prio.negar.length)ph+=`<div class="sum-item"><span class="sum-num">${n++}.</span><span><strong style="color:var(--red);">Negar hoy:</strong> <span style="color:var(--text2);">${prio.negar.slice(0,5).join(', ')}${prio.negar.length>5?' + '+(prio.negar.length-5)+' más':''}</span></span></div>`;
+  if(prio.bajar.length)ph+=`<div class="sum-item"><span class="sum-num">${n++}.</span><span><strong style="color:var(--amber);">Bajar bid -20%:</strong> <span style="color:var(--text2);">${prio.bajar.slice(0,4).join(', ')}</span></span></div>`;
+  if(prio.anadir.length)ph+=`<div class="sum-item"><span class="sum-num">${n++}.</span><span><strong style="color:var(--blue);">Añadir como exacta:</strong> <span style="color:var(--text2);">${prio.anadir.slice(0,4).join(', ')}</span></span></div>`;
+  if(prio.subir.length)ph+=`<div class="sum-item"><span class="sum-num">${n++}.</span><span><strong style="color:var(--green);">Subir bid +15%:</strong> <span style="color:var(--text2);">${prio.subir.slice(0,4).join(', ')}</span></span></div>`;
+  if(prio.ctr.length)ph+=`<div class="sum-item"><span class="sum-num">${n++}.</span><span><strong style="color:var(--purple);">Revisar CTR / listing:</strong> <span style="color:var(--text2);">${prio.ctr.slice(0,3).join(', ')}</span></span></div>`;
+  if(!ph)ph=`<div style="font-size:13px;color:var(--text2);">Todo dentro de parámetros. Sin acciones urgentes esta semana.</div>`;
+  document.getElementById('prioridades').innerHTML=ph;
+  document.getElementById('sumbox').style.display='block';
+  document.getElementById('result-card').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// DRAG & DROP
+const dz=document.getElementById('dz');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.style.borderColor='var(--text)';});
+dz.addEventListener('dragleave',()=>{if(!dz.classList.contains('loaded'))dz.style.borderColor='var(--border2)';});
+dz.addEventListener('drop',e=>{e.preventDefault();const f=e.dataTransfer.files[0];if(f)readFile({files:[f]});});
+
+recalc();
+</script>
+</body>
+</html>

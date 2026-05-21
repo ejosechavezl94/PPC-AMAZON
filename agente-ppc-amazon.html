@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agente PPC Amazon.es</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #1a1a24;
+    --border: #2a2a3a;
+    --border2: #3a3a50;
+    --text: #e8e8f0;
+    --text2: #8888aa;
+    --text3: #5555770;
+    --accent: #ff6b35;
+    --accent2: #ff9a00;
+    --green: #00d084;
+    --red: #ff4466;
+    --amber: #ffcc00;
+    --blue: #4488ff;
+    --purple: #9966ff;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: var(--accent);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: #fff;
+  }
+  .logo-text {
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    color: var(--text);
+  }
+  .logo-sub {
+    font-size: 11px;
+    color: var(--text2);
+    font-family: var(--mono);
+    letter-spacing: 0.08em;
+  }
+  .header-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--green);
+    border: 1px solid var(--green);
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.1em;
+  }
+
+  /* NAV TABS */
+  .nav {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    background: var(--bg);
+    overflow-x: auto;
+  }
+  .nav-tab {
+    padding: 14px 20px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--text2);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* LAYOUT */
+  .main { padding: 32px; max-width: 1100px; margin: 0 auto; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
+  /* METRIC CARDS */
+  .metric {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .metric-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text2);
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .metric-value {
+    font-family: var(--mono);
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .metric-value.ok { color: var(--green); }
+  .metric-value.warn { color: var(--amber); }
+  .metric-value.bad { color: var(--red); }
+  .metric-sub {
+    font-size: 11px;
+    color: var(--text2);
+    margin-top: 4px;
+  }
+
+  /* SLIDERS */
+  .slider-group { margin-bottom: 20px; }
+  .slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .slider-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text2);
+    letter-spacing: 0.05em;
+  }
+  .slider-value {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+  }
+  input[type=range] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 3px;
+    background: var(--border2);
+    border-radius: 2px;
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb:hover {
+    box-shadow: 0 0 0 4px rgba(255,107,53,0.2);
+  }
+
+  /* RULES */
+  .rule {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+  .rule:last-child { border-bottom: none; padding-bottom: 0; }
+  .rule-badge {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .rb-up { background: rgba(0,208,132,0.15); color: var(--green); border: 1px solid rgba(0,208,132,0.3); }
+  .rb-down { background: rgba(255,68,102,0.15); color: var(--red); border: 1px solid rgba(255,68,102,0.3); }
+  .rb-pause { background: rgba(255,204,0,0.15); color: var(--amber); border: 1px solid rgba(255,204,0,0.3); }
+  .rb-add { background: rgba(68,136,255,0.15); color: var(--blue); border: 1px solid rgba(68,136,255,0.3); }
+  .rb-alert { background: rgba(153,102,255,0.15); color: var(--purple); border: 1px solid rgba(153,102,255,0.3); }
+  .rule-body {}
+  .rule-title { font-size: 13px; color: var(--text); margin-bottom: 3px; font-weight: 500; }
+  .rule-desc { font-size: 12px; color: var(--text2); }
+
+  /* TEXTAREA */
+  textarea {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.6;
+    resize: vertical;
+    min-height: 140px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  textarea:focus { border-color: var(--accent); }
+  textarea::placeholder { color: var(--text2); }
+
+  select {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 14px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+  }
+  select:focus { border-color: var(--accent); }
+
+  /* BUTTONS */
+  .btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { background: #ff8555; transform: translateY(-1px); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text2);
+    border: 1px solid var(--border2);
+  }
+  .btn-secondary:hover { color: var(--text); border-color: var(--text2); }
+
+  /* RESULTS */
+  .result-area {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 16px;
+    display: none;
+  }
+  .result-area.show { display: block; }
+  .result-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 3fr;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+    font-size: 12px;
+  }
+  .result-row:first-child {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text2);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .result-row:last-child { border-bottom: none; }
+  .status-ok { color: var(--green); font-family: var(--mono); font-size: 11px; }
+  .status-warn { color: var(--amber); font-family: var(--mono); font-size: 11px; }
+  .status-bad { color: var(--red); font-family: var(--mono); font-size: 11px; }
+  .status-add { color: var(--blue); font-family: var(--mono); font-size: 11px; }
+
+  /* SUMMARY BOX */
+  .summary-box {
+    background: rgba(255,107,53,0.08);
+    border: 1px solid rgba(255,107,53,0.3);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-top: 16px;
+  }
+  .summary-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .summary-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .summary-num {
+    font-family: var(--mono);
+    color: var(--accent);
+    font-weight: 500;
+    min-width: 20px;
+  }
+
+  /* ESTRUCTURA */
+  .fase {
+    border-left: 2px solid var(--accent);
+    padding-left: 20px;
+    margin-bottom: 24px;
+  }
+  .fase-title {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  .camp-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .camp-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .ct-auto { background: rgba(0,208,132,0.1); color: var(--green); border: 1px solid rgba(0,208,132,0.25); }
+  .ct-manual { background: rgba(68,136,255,0.1); color: var(--blue); border: 1px solid rgba(68,136,255,0.25); }
+  .ct-exact { background: rgba(153,102,255,0.1); color: var(--purple); border: 1px solid rgba(153,102,255,0.25); }
+  .ct-broad { background: rgba(255,204,0,0.1); color: var(--amber); border: 1px solid rgba(255,204,0,0.25); }
+  .camp-info {}
+  .camp-name { font-size: 13px; color: var(--text); font-weight: 500; }
+  .camp-desc { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+  /* SOP */
+  .sop-step {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    align-items: flex-start;
+  }
+  .sop-num {
+    font-family: var(--mono);
+    font-size: 20px;
+    color: var(--accent);
+    font-weight: 500;
+    min-width: 32px;
+    line-height: 1.2;
+  }
+  .sop-content {}
+  .sop-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .sop-desc { font-size: 12px; color: var(--text2); line-height: 1.6; }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); margin: 24px 0; }
+
+  /* PAGE TITLE */
+  .page-title {
+    font-family: var(--mono);
+    font-size: 18px;
+    color: var(--text);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .page-sub {
+    font-size: 13px;
+    color: var(--text2);
+    margin-bottom: 28px;
+  }
+
+  @media (max-width: 700px) {
+    .main { padding: 16px; }
+    .grid-2, .grid-4, .grid-3 { grid-template-columns: 1fr 1fr; }
+    .result-row { grid-template-columns: 1fr 1fr; }
+    .header { padding: 14px 16px; }
+    .nav { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">PPC</div>
+    <div>
+      <div class="logo-text">AGENTE PPC</div>
+      <div class="logo-sub">AMAZON.ES — FBA OPTIMIZER</div>
+    </div>
+  </div>
+  <div class="header-badge">● ACTIVO</div>
+</div>
+
+<div class="nav">
+  <button class="nav-tab active" onclick="showTab('config', this)">01 / CONFIGURACIÓN</button>
+  <button class="nav-tab" onclick="showTab('reglas', this)">02 / REGLAS</button>
+  <button class="nav-tab" onclick="showTab('analizar', this)">03 / ANALIZAR CSV</button>
+  <button class="nav-tab" onclick="showTab('estructura', this)">04 / ESTRUCTURA</button>
+  <button class="nav-tab" onclick="showTab('sop', this)">05 / RUTINA SEMANAL</button>
+</div>
+
+<div class="main">
+
+  <!-- ===== CONFIGURACIÓN ===== -->
+  <div id="config" class="section active">
+    <div class="page-title">Calibra el agente</div>
+    <div class="page-sub">Ajusta estos valores a tu producto real. El agente usará estos umbrales para tomar decisiones.</div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Parámetros de negocio</div>
+
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-label">Margen antes de PPC</span>
+            <span class="slider-value" id="v-margen">30%</span>
+          </div>
+          <input type="range" min="10" max="60" value="30" step="1" oninput="update('margen', this.value, '%')">
+        </div>
+
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-label">Precio de venta (€)</span>
+            <span class="slider-value" id="v-precio">25€</span>
+          </div>
+          <input type="range" min="5" max="150" value="25" step="1" oninput="update('precio', this.value, '€')">
+        </div>
+
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-label">Budget diario PPC (€)</span>
+            <span class="slider-value" id="v-budget">20€</span>
+          </div>
+          <input type="range" min="5" max="100" value="20" step="1" oninput="update('budget', this.value, '€')">
+        </div>
+
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-label">ACOS objetivo</span>
+            <span class="slider-value" id="v-acos">20%</span>
+          </div>
+          <input type="range" min="5" max="40" value="20" step="1" oninput="update('acos', this.value, '%')">
+        </div>
+      </div>
+
+      <div>
+        <div class="grid-2" style="margin-bottom:12px;">
+          <div class="metric">
+            <div class="metric-label">ACOS máx. tolerable</div>
+            <div class="metric-value ok" id="m-acosmax">21%</div>
+            <div class="metric-sub">Margen × 0.7</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">CPC máximo</div>
+            <div class="metric-value" id="m-cpc">0.50€</div>
+            <div class="metric-sub">Precio × ACOS obj.</div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="metric">
+            <div class="metric-label">Coste máx/venta</div>
+            <div class="metric-value" id="m-coste">5.00€</div>
+            <div class="metric-sub">Lo que puedes gastar</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Ventas/día estimadas</div>
+            <div class="metric-value" id="m-ventas">~4</div>
+            <div class="metric-sub">Con este budget</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px;">
+          <div class="card-title">Diagnóstico de margen</div>
+          <div id="diagnostico" style="font-size:13px; color: var(--text2); line-height:1.7;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== REGLAS ===== -->
+  <div id="reglas" class="section">
+    <div class="page-title">Reglas del agente</div>
+    <div class="page-sub">Estas reglas definen cuándo y cómo actuar. Aplícalas cada semana al revisar tus reportes.</div>
+
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <div class="card-title">Gestión de bids</div>
+          <div class="rule">
+            <span class="rule-badge rb-up">subir bid</span>
+            <div class="rule-body">
+              <div class="rule-title">ACOS &lt; objetivo + 2 ventas en 7 días</div>
+              <div class="rule-desc">Aumentar bid +15%. Hay margen y la keyword convierte. No desperdicies posición.</div>
+            </div>
+          </div>
+          <div class="rule">
+            <span class="rule-badge rb-down">bajar bid</span>
+            <div class="rule-body">
+              <div class="rule-title">ACOS &gt; máximo tolerable por 7+ días</div>
+              <div class="rule-desc">Reducir bid -15% a -20%. Estás perdiendo dinero por cada click. Actúa rápido.</div>
+            </div>
+          </div>
+          <div class="rule">
+            <span class="rule-badge rb-pause">revisar</span>
+            <div class="rule-body">
+              <div class="rule-title">+20 clicks sin ninguna venta en 14 días</div>
+              <div class="rule-desc">Pausa o reduce bid al mínimo. Puede ser problema de listing o keyword irrelevante.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Alertas de campaña</div>
+          <div class="rule">
+            <span class="rule-badge rb-up">escalar</span>
+            <div class="rule-body">
+              <div class="rule-title">Campaña auto con ACOS &lt; objetivo y ventas constantes</div>
+              <div class="rule-desc">Migra los winners a campaña manual exacta. Más control, menos desperdicio.</div>
+            </div>
+          </div>
+          <div class="rule">
+            <span class="rule-badge rb-alert">alerta</span>
+            <div class="rule-body">
+              <div class="rule-title">Budget agotado antes de las 18:00</div>
+              <div class="rule-desc">Pierdes tráfico de tarde. Aumenta budget o redistribuye hacia campañas ganadoras.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-title">Gestión de keywords</div>
+          <div class="rule">
+            <span class="rule-badge rb-add">añadir</span>
+            <div class="rule-body">
+              <div class="rule-title">Search term con 2+ ventas no está como exacta</div>
+              <div class="rule-desc">Añade como keyword exacta en campaña manual con bid calculado según tu CPC máximo.</div>
+            </div>
+          </div>
+          <div class="rule">
+            <span class="rule-badge rb-pause">negar</span>
+            <div class="rule-body">
+              <div class="rule-title">Search term con clicks pero 0 ventas en 30 días</div>
+              <div class="rule-desc">Añade como negativa exacta en esa campaña. Evita que siga quemando presupuesto.</div>
+            </div>
+          </div>
+          <div class="rule">
+            <span class="rule-badge rb-down">revisar</span>
+            <div class="rule-body">
+              <div class="rule-title">CTR &lt; 0.3% con +500 impresiones</div>
+              <div class="rule-desc">Problema de relevancia. Revisa título del listing o el match type. La keyword puede ser muy genérica.</div>
+            </div>
+          </div>
+          <div class="rule">
+            <span class="rule-badge rb-pause">pausar</span>
+            <div class="rule-body">
+              <div class="rule-title">Keyword sin impresiones en 14 días</div>
+              <div class="rule-desc">Bid demasiado bajo o keyword irrelevante para el algoritmo. Sube bid o pausa y sustituye.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="background: rgba(255,107,53,0.05); border-color: rgba(255,107,53,0.2);">
+          <div class="card-title">Regla de oro</div>
+          <div style="font-size:13px; color: var(--text); line-height:1.8;">
+            Nunca toques más de <span style="color:var(--accent); font-weight:600;">3-4 keywords</span> en la misma sesión. Los cambios necesitan 5-7 días de datos para evaluarse. Actuar con impaciencia es el error más común en PPC.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ANALIZAR CSV ===== -->
+  <div id="analizar" class="section">
+    <div class="page-title">Analizar reporte CSV</div>
+    <div class="page-sub">Descarga el reporte de Amazon → súbelo aquí → el agente te dice qué hacer.</div>
+
+    <div class="card">
+      <div class="card-title">Tipo de reporte</div>
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <select id="tipo-rep">
+          <option value="search_term">Search Term Report</option>
+          <option value="campaign">Campaign Performance Report</option>
+          <option value="keyword">Keyword Report</option>
+          <option value="product">Advertised Product Report</option>
+        </select>
+        <span style="font-size:12px; color:var(--text2);">Seller Central → Publicidad → Informes de campañas</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Subir archivo CSV</div>
+
+      <div id="drop-zone" onclick="document.getElementById('file-input').click()"
+        style="border: 2px dashed var(--border2); border-radius:10px; padding:40px 20px; text-align:center; cursor:pointer; transition: border-color 0.2s; margin-bottom:16px;">
+        <div style="font-size:32px; margin-bottom:12px;">📂</div>
+        <div style="font-family:var(--mono); font-size:12px; color:var(--accent); margin-bottom:6px; letter-spacing:0.08em;">HAZ CLIC PARA SUBIR TU CSV</div>
+        <div style="font-size:12px; color:var(--text2);">O arrastra el archivo aquí · Formatos: .csv o .txt</div>
+        <input type="file" id="file-input" accept=".csv,.txt" style="display:none;" onchange="leerArchivo(this)">
+      </div>
+
+      <div id="file-info" style="display:none; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:12px 16px; margin-bottom:16px; display:none; align-items:center; justify-content:space-between;">
+        <div>
+          <span style="font-family:var(--mono); font-size:11px; color:var(--green);">✓ ARCHIVO CARGADO — </span>
+          <span id="file-name" style="font-family:var(--mono); font-size:11px; color:var(--text2);"></span>
+        </div>
+        <button class="btn btn-secondary" style="padding:4px 12px; font-size:10px;" onclick="limpiar()">✕ QUITAR</button>
+      </div>
+
+      <div style="margin-bottom:12px;">
+        <div style="font-family:var(--mono); font-size:10px; color:var(--text2); letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">O pega los datos manualmente</div>
+        <textarea id="csv-data" placeholder="Pega aquí las filas del CSV si prefieres..."></textarea>
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="analizarDatos()">▶ ANALIZAR DATOS</button>
+        <button class="btn btn-secondary" onclick="cargarEjemplo()">CARGAR EJEMPLO</button>
+        <button class="btn btn-secondary" onclick="limpiar()">LIMPIAR</button>
+      </div>
+    </div>
+
+    <div class="result-area" id="resultado">
+      <div style="font-family:var(--mono); font-size:10px; color:var(--accent); letter-spacing:0.1em; margin-bottom:16px; text-transform:uppercase;">Análisis del agente</div>
+      <div class="result-row" style="font-weight:500;">
+        <div>TÉRMINO / KEYWORD</div>
+        <div>ACOS</div>
+        <div>ESTADO</div>
+        <div>ACCIÓN RECOMENDADA</div>
+      </div>
+      <div id="filas-resultado"></div>
+      <div class="summary-box" id="resumen-box" style="display:none;">
+        <div class="summary-title">Prioridades esta semana</div>
+        <div id="prioridades"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ESTRUCTURA ===== -->
+  <div id="estructura" class="section">
+    <div class="page-title">Estructura de campañas</div>
+    <div class="page-sub">Arquitectura recomendada para lanzar desde cero en Amazon.es con FBA.</div>
+
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <div class="card-title">Fase 1 — Lanzamiento (semanas 1-4)</div>
+          <div class="fase">
+            <div class="fase-title">Objetivo: descubrir qué convierte</div>
+            <div class="camp-row">
+              <span class="camp-tag ct-auto">AUTO</span>
+              <div class="camp-info">
+                <div class="camp-name">Campaña automática</div>
+                <div class="camp-desc">Budget: 40% del total diario. No toques bids mínimo 14 días. Deja que Amazon recopile datos.</div>
+              </div>
+            </div>
+            <div class="camp-row">
+              <span class="camp-tag ct-manual">MANUAL</span>
+              <span class="camp-tag ct-broad">BROAD</span>
+              <div class="camp-info">
+                <div class="camp-name">3-5 keywords principales</div>
+                <div class="camp-desc">Budget: 35% del total. Ampliar alcance y detectar variantes. Revisa cada 7 días.</div>
+              </div>
+            </div>
+            <div class="camp-row">
+              <span class="camp-tag ct-manual">MANUAL</span>
+              <span class="camp-tag ct-exact">EXACTA</span>
+              <div class="camp-info">
+                <div class="camp-name">Keyword principal obvia</div>
+                <div class="camp-desc">Budget: 25% del total. Ganar velocidad en tu término más relevante desde día 1.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Fase 2 — Optimización (semana 4+)</div>
+          <div style="font-size:13px; color:var(--text); line-height:2;">
+            <div>① Exportar Search Term Report semanal</div>
+            <div>② Aplicar reglas del agente (pestaña 02)</div>
+            <div>③ Mover winners de auto → manual exacta</div>
+            <div>④ Añadir negativas en campaña auto</div>
+            <div>⑤ Redistribuir budget hacia lo que convierte</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-title">Nomenclatura de campañas</div>
+          <div style="font-family:var(--mono); font-size:12px; line-height:2.2; color:var(--text2);">
+            <div><span style="color:var(--accent);">SP</span> = Sponsored Products</div>
+            <div><span style="color:var(--accent);">AUTO</span> = Campaña automática</div>
+            <div><span style="color:var(--accent);">MAN-B</span> = Manual broad</div>
+            <div><span style="color:var(--accent);">MAN-E</span> = Manual exacta</div>
+            <div><span style="color:var(--accent);">MAN-P</span> = Manual phrase</div>
+            <div style="margin-top:10px; padding-top:10px; border-top:1px solid var(--border); color:var(--text);">Ejemplo:</div>
+            <div style="color:var(--green);">SP_AUTO_BOLIGRAFO_001</div>
+            <div style="color:var(--blue);">SP_MAN-E_BOLIGRAFO_001</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px;">
+          <div class="card-title">Tipos de match — cuándo usar cada uno</div>
+          <div class="rule">
+            <span class="camp-tag ct-broad" style="flex-shrink:0; margin-top:2px;">BROAD</span>
+            <div style="font-size:12px; color:var(--text2);">Máximo alcance. Más conversiones pero también más irrelevantes. Necesita negativas activas.</div>
+          </div>
+          <div class="rule">
+            <span class="camp-tag" style="background:rgba(153,102,255,0.1); color:var(--purple); border:1px solid rgba(153,102,255,0.25); flex-shrink:0; margin-top:2px;">PHRASE</span>
+            <div style="font-size:12px; color:var(--text2);">Equilibrio entre alcance y control. Ideal para escalar keywords que ya funcionan en broad.</div>
+          </div>
+          <div class="rule" style="border:none;">
+            <span class="camp-tag ct-exact" style="flex-shrink:0; margin-top:2px;">EXACTA</span>
+            <div style="font-size:12px; color:var(--text2);">Máximo control. Solo para keywords probadas con historial de ventas. Mejora ACOS real.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== RUTINA SEMANAL ===== -->
+  <div id="sop" class="section">
+    <div class="page-title">Rutina semanal de PPC</div>
+    <div class="page-sub">30 minutos cada lunes. Este es el proceso completo que debes seguir.</div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Proceso — cada lunes</div>
+        <div class="sop-step">
+          <div class="sop-num">01</div>
+          <div class="sop-content">
+            <div class="sop-title">Descargar reportes (5 min)</div>
+            <div class="sop-desc">Seller Central → Publicidad → Informes de campañas. Descarga: Search Term Report + Campaign Performance. Rango: últimos 7 días.</div>
+          </div>
+        </div>
+        <div class="sop-step">
+          <div class="sop-num">02</div>
+          <div class="sop-content">
+            <div class="sop-title">Revisar métricas globales (5 min)</div>
+            <div class="sop-desc">Comprueba TACOS total (gasto PPC / ventas totales). Si supera tu ACOS máximo, hay un problema estructural antes de tocar nada más.</div>
+          </div>
+        </div>
+        <div class="sop-step">
+          <div class="sop-num">03</div>
+          <div class="sop-content">
+            <div class="sop-title">Analizar Search Terms (10 min)</div>
+            <div class="sop-desc">Pega el Search Term Report en la pestaña 03 de esta app. El agente te dice exactamente qué terms añadir como keywords y cuáles negar.</div>
+          </div>
+        </div>
+        <div class="sop-step">
+          <div class="sop-num">04</div>
+          <div class="sop-content">
+            <div class="sop-title">Ajustar bids (5 min)</div>
+            <div class="sop-desc">Aplica las reglas de la pestaña 02. Máximo 3-4 cambios por sesión. Documenta cada cambio con la fecha.</div>
+          </div>
+        </div>
+        <div class="sop-step" style="margin-bottom:0;">
+          <div class="sop-num">05</div>
+          <div class="sop-content">
+            <div class="sop-title">Registro y seguimiento (5 min)</div>
+            <div class="sop-desc">Anota en tu hoja de seguimiento: ACOS semana, TACOS semana, gasto total, ventas totales, acciones tomadas. Compara con semana anterior.</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-title">KPIs a vigilar cada semana</div>
+          <div style="font-size:13px; line-height:2.2;">
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; margin-bottom:8px;">
+              <span style="color:var(--text2);">TACOS total</span>
+              <span style="color:var(--green); font-family:var(--mono);">&lt; 15% ideal</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; margin-bottom:8px;">
+              <span style="color:var(--text2);">ACOS campañas activas</span>
+              <span style="color:var(--amber); font-family:var(--mono);">= tu objetivo</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; margin-bottom:8px;">
+              <span style="color:var(--text2);">CTR medio</span>
+              <span style="color:var(--green); font-family:var(--mono);">&gt; 0.35%</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; margin-bottom:8px;">
+              <span style="color:var(--text2);">Conversion rate</span>
+              <span style="color:var(--green); font-family:var(--mono);">&gt; 10%</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="color:var(--text2);">% budget gastado</span>
+              <span style="color:var(--amber); font-family:var(--mono);">80-100%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px; background:rgba(255,107,53,0.05); border-color:rgba(255,107,53,0.2);">
+          <div class="card-title">Lo que NO debes hacer</div>
+          <div style="font-size:13px; color:var(--text2); line-height:2;">
+            <div>✗ Tocar bids sin datos de al menos 7 días</div>
+            <div>✗ Pausar campañas los primeros 30 días</div>
+            <div>✗ Bajar budget cuando el ACOS está alto</div>
+            <div>✗ Crear nuevas campañas antes de optimizar las que tienes</div>
+            <div>✗ Copiar estructura de otro vendedor sin entenderla</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const state = { margen:30, precio:25, budget:20, acos:20 };
+
+function update(key, val, unit) {
+  state[key] = parseFloat(val);
+  document.getElementById('v-' + key).textContent = val + unit;
+  recalcular();
+}
+
+function recalcular() {
+  const acosMax = Math.round(state.margen * 0.7);
+  const cpc = (state.acos / 100 * state.precio).toFixed(2);
+  const coste = (state.acos / 100 * state.precio).toFixed(2);
+  const ventas = Math.round(state.budget / (state.acos / 100 * state.precio));
+
+  document.getElementById('m-acosmax').textContent = acosMax + '%';
+  document.getElementById('m-cpc').textContent = cpc + '€';
+  document.getElementById('m-coste').textContent = coste + '€';
+  document.getElementById('m-ventas').textContent = '~' + ventas;
+
+  const acosEl = document.getElementById('m-acosmax');
+  acosEl.className = 'metric-value' + (acosMax >= 25 ? ' ok' : acosMax >= 15 ? ' warn' : ' bad');
+
+  let diag = '';
+  if (state.margen < 20) diag = '⚠️ Margen muy ajustado. Con menos de un 20% antes de PPC, es difícil ser rentable en Amazon. Considera revisar precio o costes.';
+  else if (state.margen < 30) diag = 'Margen moderado. El PPC te dejará margen justo. Necesitas un ACOS muy controlado para ser rentable.';
+  else if (state.margen >= 30 && state.margen < 45) diag = '✓ Buen margen. Tienes suficiente colchón para invertir en PPC durante el lanzamiento sin perder dinero.';
+  else diag = '✓ Margen excelente. Mucha flexibilidad para ser agresivo en PPC y ganar posición de mercado.';
+  document.getElementById('diagnostico').textContent = diag;
+}
+
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function leerArchivo(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const content = e.target.result;
+    document.getElementById('csv-data').value = content;
+    document.getElementById('file-name').textContent = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+    const fi = document.getElementById('file-info');
+    fi.style.display = 'flex';
+    const dz = document.getElementById('drop-zone');
+    dz.style.borderColor = 'var(--green)';
+    dz.style.background = 'rgba(0,208,132,0.04)';
+    dz.querySelector('div:first-child').textContent = '✓';
+    dz.querySelector('div:nth-child(2)').textContent = 'ARCHIVO LISTO PARA ANALIZAR';
+    dz.querySelector('div:nth-child(2)').style.color = 'var(--green)';
+    dz.querySelector('div:nth-child(3)').textContent = file.name;
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function cargarEjemplo() {
+  const ejemplo = `Keyword,Search Term,Impressions,Clicks,CTR,CPC,Spend,Sales,Orders,ACOS
+bolígrafo gel,boligrafo gel negro,1200,45,3.75%,0.32,14.40,52.00,4,27.69%
+bolígrafo gel,boli gel azul,890,38,4.27%,0.28,10.64,0,0,-
+bolígrafo gel,rotulador gel,450,12,2.67%,0.25,3.00,13.00,1,23.08%
+bolígrafo gel,pluma tinta gel,2100,8,0.38%,0.41,3.28,0,0,-
+bolígrafo gel,boligrafo escolar,670,29,4.33%,0.30,8.70,26.00,2,33.46%
+bolígrafo gel,papelería escolar,380,4,1.05%,0.22,0.88,0,0,-`;
+  document.getElementById('csv-data').value = ejemplo;
+  document.getElementById('tipo-rep').value = 'search_term';
+  document.getElementById('file-name').textContent = 'ejemplo-search-term.csv';
+  const fi = document.getElementById('file-info');
+  fi.style.display = 'flex';
+  const dz = document.getElementById('drop-zone');
+  dz.style.borderColor = 'var(--amber)';
+  dz.querySelector('div:nth-child(2)').textContent = 'EJEMPLO CARGADO';
+  dz.querySelector('div:nth-child(2)').style.color = 'var(--amber)';
+  dz.querySelector('div:nth-child(3)').textContent = 'Datos de prueba para ver cómo funciona el análisis';
+}
+
+function limpiar() {
+  document.getElementById('csv-data').value = '';
+  document.getElementById('resultado').classList.remove('show');
+  document.getElementById('file-info').style.display = 'none';
+  document.getElementById('file-input').value = '';
+  const dz = document.getElementById('drop-zone');
+  dz.style.borderColor = 'var(--border2)';
+  dz.style.background = 'transparent';
+  dz.querySelector('div:first-child').textContent = '📂';
+  dz.querySelector('div:nth-child(2)').textContent = 'HAZ CLIC PARA SUBIR TU CSV';
+  dz.querySelector('div:nth-child(2)').style.color = 'var(--accent)';
+  dz.querySelector('div:nth-child(3)').textContent = 'O arrastra el archivo aquí · Formatos: .csv o .txt';
+}
+
+function analizarDatos() {
+  const raw = document.getElementById('csv-data').value.trim();
+  if (!raw) { alert('Pega primero los datos del CSV o usa el botón CARGAR EJEMPLO'); return; }
+
+  const lines = raw.split('\n').filter(l => l.trim());
+  if (lines.length < 2) { alert('Necesito al menos una fila de datos además del encabezado.'); return; }
+
+  const acosObj = state.acos;
+  const acosMax = state.margen * 0.7;
+  const cpcMax = (state.acos / 100 * state.precio);
+
+  const filas = [];
+  const prioList = { anadir: [], negar: [], subir: [], bajar: [], revisar: [] };
+
+  for (let i = 1; i < lines.length; i++) {
+    const cols = lines[i].split(',').map(c => c.trim().replace('%',''));
+    if (cols.length < 6) continue;
+
+    const searchTerm = cols[1] || cols[0] || 'Término ' + i;
+    const impressions = parseFloat(cols[2]) || 0;
+    const clicks = parseFloat(cols[3]) || 0;
+    const ctr = parseFloat(cols[4]) || 0;
+    const cpc = parseFloat(cols[5]) || 0;
+    const spend = parseFloat(cols[6]) || 0;
+    const sales = parseFloat(cols[7]) || 0;
+    const orders = parseFloat(cols[8]) || 0;
+    const acos = parseFloat(cols[9]) || 0;
+    const hasAcos = cols[9] && cols[9] !== '-' && cols[9] !== '' && orders > 0;
+
+    let estado = '', accion = '', clase = '';
+
+    if (!hasAcos || orders === 0) {
+      if (clicks >= 20) {
+        estado = '⏸ PAUSAR'; clase = 'status-bad';
+        accion = 'Sin ventas con ' + clicks + ' clicks. Añadir como negativa exacta o reducir bid al mínimo.';
+        prioList.negar.push(searchTerm);
+      } else if (impressions > 500 && ctr < 0.3) {
+        estado = '⚠ CTR BAJO'; clase = 'status-warn';
+        accion = 'CTR muy bajo (' + ctr.toFixed(2) + '%). Revisar relevancia del listing o match type.';
+        prioList.revisar.push(searchTerm);
+      } else {
+        estado = '⏳ ESPERAR'; clase = 'status-warn';
+        accion = 'Datos insuficientes. Necesita más tráfico para evaluar. Mínimo 20 clicks.';
+      }
+    } else if (acos > acosMax) {
+      estado = '📉 BAJAR BID'; clase = 'status-bad';
+      accion = 'ACOS ' + acos.toFixed(1) + '% supera el máximo (' + acosMax.toFixed(0) + '%). Reducir bid -15% a -20%.';
+      prioList.bajar.push(searchTerm);
+    } else if (acos <= acosObj && orders >= 2) {
+      estado = '📈 SUBIR BID'; clase = 'status-ok';
+      accion = 'ACOS ' + acos.toFixed(1) + '% dentro de objetivo con ' + orders + ' ventas. Subir bid +15%. Si no está como exacta, añadir.';
+      prioList.subir.push(searchTerm);
+      if (orders >= 2) prioList.anadir.push(searchTerm);
+    } else if (acos <= acosMax && acos > acosObj) {
+      estado = '✓ OK'; clase = 'status-ok';
+      accion = 'ACOS ' + acos.toFixed(1) + '% aceptable. Mantener. Revisar en 7 días.';
+    } else {
+      estado = '✓ OK'; clase = 'status-ok';
+      accion = 'Dentro de parámetros. Sin cambios necesarios.';
+    }
+
+    filas.push({ searchTerm, acos: hasAcos ? acos.toFixed(1) + '%' : '—', estado, accion, clase });
+  }
+
+  const contenedor = document.getElementById('filas-resultado');
+  contenedor.innerHTML = filas.map(f =>
+    `<div class="result-row">
+      <div style="font-size:12px;">${f.searchTerm}</div>
+      <div style="font-family:var(--mono); font-size:12px;">${f.acos}</div>
+      <div class="${f.clase}">${f.estado}</div>
+      <div style="font-size:12px; color:var(--text2);">${f.accion}</div>
+    </div>`
+  ).join('');
+
+  const pBox = document.getElementById('prioridades');
+  let pHTML = '';
+  let n = 1;
+  if (prioList.negar.length) { pHTML += `<div class="summary-item"><span class="summary-num">${n++}.</span><span>Negar estas keywords hoy: <strong style="color:var(--red);">${prioList.negar.join(', ')}</strong></span></div>`; }
+  if (prioList.bajar.length) { pHTML += `<div class="summary-item"><span class="summary-num">${n++}.</span><span>Bajar bid -15%: <strong style="color:var(--amber);">${prioList.bajar.join(', ')}</strong></span></div>`; }
+  if (prioList.anadir.length) { pHTML += `<div class="summary-item"><span class="summary-num">${n++}.</span><span>Añadir como exacta: <strong style="color:var(--blue);">${prioList.anadir.join(', ')}</strong></span></div>`; }
+  if (prioList.subir.length) { pHTML += `<div class="summary-item"><span class="summary-num">${n++}.</span><span>Subir bid +15%: <strong style="color:var(--green);">${prioList.subir.join(', ')}</strong></span></div>`; }
+  if (prioList.revisar.length) { pHTML += `<div class="summary-item"><span class="summary-num">${n++}.</span><span>Revisar listing/relevancia: <strong style="color:var(--purple);">${prioList.revisar.join(', ')}</strong></span></div>`; }
+  if (!pHTML) pHTML = '<div style="font-size:13px; color:var(--text2);">Todo está dentro de parámetros. Sin acciones urgentes esta semana.</div>';
+
+  pBox.innerHTML = pHTML;
+  document.getElementById('resumen-box').style.display = 'block';
+  document.getElementById('resultado').classList.add('show');
+  document.getElementById('resultado').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+recalcular();
+
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.style.borderColor = 'var(--accent)'; });
+dz.addEventListener('dragleave', () => { dz.style.borderColor = 'var(--border2)'; });
+dz.addEventListener('drop', e => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    const fakeInput = { files: [file] };
+    leerArchivo(fakeInput);
+  }
+});
+</script>
+</body>
+</html>
