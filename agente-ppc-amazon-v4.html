@@ -198,7 +198,7 @@
       </button>
       <button onclick="AmazonPPC.ui.switchTab('campaigns')" id="btn-tab-campaigns" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-[13px] text-slate-500 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-800/30 hover:text-slate-900 dark:hover:text-white transition-all">
         <span class="material-symbols-outlined text-[20px]">campaign</span>
-        Estructura y Fases
+        Arquitectura de Campañas
       </button>
       <button onclick="AmazonPPC.ui.switchTab('rules')" id="btn-tab-rules" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-[13px] text-slate-500 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-slate-800/30 hover:text-slate-900 dark:hover:text-white transition-all">
         <span class="material-symbols-outlined text-[20px]">auto_awesome</span>
@@ -338,7 +338,7 @@
           <!-- KPI 5 -->
           <div class="glass-card hover-lift p-5 rounded-xl flex flex-col justify-between col-span-2 lg:col-span-1">
             <div class="flex justify-between items-start mb-4">
-              <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">TACOS Calculado</span>
+              <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">TACOS Estimado</span>
               <div class="p-1 bg-amber-500/10 rounded-full">
                 <span class="material-symbols-outlined text-amber-warning text-[16px]">pie_chart</span>
               </div>
@@ -501,6 +501,7 @@
               <option value="bajar">Bajar Bid (Protegida)</option>
               <option value="ctr">Listing (CTR Bajo)</option>
               <option value="esperar">Esperar Datos</option>
+              <option value="sin_imps">Sin Impresiones</option>
             </select>
           </div>
         </div>
@@ -659,7 +660,7 @@
         </div>
 
         <!-- Selector de Fases -->
-        <div class="grid grid-cols-3 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-white dark:bg-slate-900 shadow-sm">
+        <div class="grid grid-cols-1 sm:grid-cols-3 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-white dark:bg-slate-900 shadow-sm divide-y sm:divide-y-0 sm:divide-x divide-slate-200 dark:divide-slate-800">
           <button onclick="AmazonPPC.ui.switchPhase(1)" id="btn-phase-1" class="phase-btn py-3 px-4 text-xs font-bold text-center bg-slate-900 text-white dark:bg-slate-800 transition-all">
             <span class="block text-[9px] font-data-mono opacity-60 mb-0.5">Fase 1</span>
             Lanzamiento (0-4 Semanas)
@@ -861,7 +862,7 @@
                     Carga y Auditoría con el Agente
                     <span class="text-[10px] text-slate-400 font-normal font-data-mono">12 Minutos</span>
                   </h4>
-                  <p class="text-xs text-secondary dark:text-slate-400 leading-relaxed">Sube el CSV descargado en el **Dashboard** de esta herramienta. Analiza el Score de salud. Dirígete a la pestaña **Auditoría de Términos** para inspeccionar la tabla de decisiones y copiar la checklist semanal priorizada.</p>
+                  <p class="text-xs text-secondary dark:text-slate-400 leading-relaxed">Sube el CSV descargado en el <strong>Dashboard</strong> de esta herramienta. Analiza el Score de salud. Dirígete a la pestaña <strong>Auditoría de Términos</strong> para inspeccionar la tabla de decisiones y copiar la checklist semanal priorizada.</p>
                 </div>
               </div>
 
@@ -1049,8 +1050,11 @@
 
           const results = [];
 
-          // Encontrar índices de forma dinámica
-          const idxTerm = cols.findIndex(c => c.includes('search term') || c.includes('término de búsqueda') || c.includes('customer search term') || c.includes('targeting') || c.includes('orientación') || c.includes('keyword') || c.includes('palabra clave') || c.includes('target'));
+          // Encontrar índices de forma dinámica (priorizando términos reales del cliente frente a keywords de segmentación)
+          let idxTerm = cols.findIndex(c => c.includes('customer search term') || c.includes('término de búsqueda') || c.includes('search term'));
+          if (idxTerm === -1) {
+            idxTerm = cols.findIndex(c => c.includes('targeting') || c.includes('orientación') || c.includes('keyword') || c.includes('palabra clave') || c.includes('target'));
+          }
           const idxCamp = cols.findIndex(c => c.includes('campaign') || c.includes('campaña'));
           const idxMatch = cols.findIndex(c => c.includes('match type') || c.includes('tipo de concordancia') || c.includes('concordancia'));
           const idxImps = cols.findIndex(c => c.includes('impressions') || c.includes('impresiones') || c === 'imps');
@@ -1073,8 +1077,13 @@
             let matchType = idxMatch !== -1 ? row[idxMatch] : (reportType === 'sd' ? 'Audience' : 'Auto');
             let imps = this.parseNum(idxImps !== -1 ? row[idxImps] : 0);
             let clicks = this.parseNum(idxClicks !== -1 ? row[idxClicks] : 0);
-            let ctr = this.parseNum(idxCtr !== -1 ? row[idxCtr] : 0);
+            // Calcular CTR exacto a partir de clics e impresiones para evitar ambigüedades con símbolos de % o decimales
+            let ctr = imps > 0 ? ((clicks / imps) * 100) : this.parseNum(idxCtr !== -1 ? row[idxCtr] : 0);
             let cpc = this.parseNum(idxCpc !== -1 ? row[idxCpc] : 0);
+            if (cpc === 0 && clicks > 0) {
+              const sp = this.parseNum(idxSpend !== -1 ? row[idxSpend] : 0);
+              if (sp > 0) cpc = sp / clicks;
+            }
             let spend = this.parseNum(idxSpend !== -1 ? row[idxSpend] : 0);
             let sales = this.parseNum(idxSales !== -1 ? row[idxSales] : 0);
             let orders = this.parseNum(idxOrders !== -1 ? row[idxOrders] : 0);
@@ -1087,11 +1096,6 @@
             if (!hasAcos && orders > 0 && sales > 0) {
               acos = (spend / sales) * 100;
               hasAcos = true;
-            }
-
-            // Sanitizar valores extremos de CTR si vienen como ratio (ej: 0.02 en vez de 2%)
-            if (ctr > 0 && ctr < 1 && clicks > 0 && imps > 0) {
-              ctr = ctr * 100;
             }
 
             results.push({
@@ -1183,9 +1187,14 @@
           
           if (analyzedRows.length === 0) return 100;
 
-          // Penalización por TACOS
-          if (globalAcos > targetTacos * 1.5) score -= 35;
-          else if (globalAcos > targetTacos) score -= 15;
+          // Penalización si no hay ventas pero hubo gasto publicitario
+          if (globalAcos === null) {
+            score -= 40;
+          } else {
+            // Penalización por ACOS
+            if (globalAcos > targetAcos * 1.5) score -= 35;
+            else if (globalAcos > targetAcos) score -= 15;
+          }
 
           // Clics desperdiciados
           const negarRows = analyzedRows.filter(r => r.estado === 'Negar');
@@ -1270,11 +1279,13 @@
             htmlEl.classList.remove('light');
             icon.textContent = 'light_mode';
             icon.className = 'material-symbols-outlined text-[18px] text-amber-400';
+            try { localStorage.setItem('ppc_theme', 'dark'); } catch (e) {}
           } else {
             htmlEl.classList.remove('dark');
             htmlEl.classList.add('light');
             icon.textContent = 'dark_mode';
             icon.className = 'material-symbols-outlined text-[18px] text-slate-600';
+            try { localStorage.setItem('ppc_theme', 'light'); } catch (e) {}
           }
         },
 
@@ -1315,8 +1326,9 @@
         recalculateCalibrations() {
           const acosMax = Math.round(state.margen * 0.7);
           const cpcObj = (state.acos / 100 * state.precio / 10).toFixed(2);
-          const cpaMax = (state.acos / 100 * state.precio).toFixed(2);
-          const ventasEstim = Math.round(state.budget / (state.acos / 100 * state.precio / 10));
+          const cpaMaxNum = (state.acos / 100 * state.precio);
+          const cpaMax = cpaMaxNum.toFixed(2);
+          const ventasEstim = cpaMaxNum > 0 ? Math.round(state.budget / cpaMaxNum) : 0;
 
           // Actualizar etiquetas en la interfaz
           document.getElementById('calc-acos-max').textContent = `${acosMax}%`;
@@ -1329,7 +1341,12 @@
           const title = document.getElementById('viability-title');
           const desc = document.getElementById('viability-desc');
 
-          if (state.margen < 20) {
+          if (state.acos > acosMax) {
+            borderCard.className = "glass-card p-5 rounded-xl border-l-4 border-red-500 bg-red-500/5";
+            title.className = "text-xs font-bold mb-2 uppercase tracking-wider text-red-500";
+            title.textContent = `⚠ Incoherencia: Target ACOS (${state.acos}%) > ACOS Máx (${acosMax}%)`;
+            desc.textContent = `Tu ACOS objetivo excede el umbral de equilibrio financiero (${acosMax}%). Tus campañas operarán con pérdidas netas por venta. Reduce el Target ACOS o ajusta el precio FBA.`;
+          } else if (state.margen < 20) {
             borderCard.className = "glass-card p-5 rounded-xl border-l-4 border-red-500 bg-red-500/5";
             title.className = "text-xs font-bold mb-2 uppercase tracking-wider text-red-500";
             title.textContent = "⚠ Rentabilidad Crítica";
@@ -1506,9 +1523,9 @@
             totalOrders += r.orders;
           });
 
-          const globalAcos = totalSales > 0 ? (totalSpend / totalSales * 100) : 0;
+          const hasSales = totalSales > 0;
+          const globalAcos = hasSales ? (totalSpend / totalSales * 100) : null;
           const globalRoas = totalSpend > 0 ? (totalSales / totalSpend) : 0;
-          const globalTacos = totalSales > 0 ? (totalSpend / totalSales * 100) : 0; // en reportes de PPC de search term asumimos la porción PPC o escalamos
           
           const ctrMedio = totalImps > 0 ? (totalClicks / totalImps * 100) : 0;
           const cvrMedio = totalClicks > 0 ? (totalOrders / totalClicks * 100) : 0;
@@ -1516,19 +1533,29 @@
           // 1. RENDERIZAR KPIs PRINCIPALES
           document.getElementById('kpi-sales').textContent = `${totalSales.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€`;
           document.getElementById('kpi-spend').textContent = `${totalSpend.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€`;
-          document.getElementById('kpi-acos').textContent = `${globalAcos.toFixed(2)}%`;
+          document.getElementById('kpi-acos').textContent = hasSales ? `${globalAcos.toFixed(2)}%` : (totalSpend > 0 ? 'N/A' : '0.00%');
           document.getElementById('kpi-roas').textContent = globalRoas.toFixed(2);
           
-          // Estimar TACOS en base al budget y el diagnóstico de rentabilidad
-          const realTacosEst = (totalSpend / (totalSales / (state.acos / 100 || 0.2))) * 10; 
-          const finalTacos = isNaN(realTacosEst) || !isFinite(realTacosEst) ? (globalAcos * 0.4) : realTacosEst;
+          // Estimar TACOS en base a las ventas totales estimadas del negocio (PPC / Total)
+          const targetAcosRatio = (state.acos / 100) || 0.2;
+          const totalSalesEst = hasSales ? (totalSales / targetAcosRatio) : 0;
+          const realTacosEst = totalSalesEst > 0 ? (totalSpend / totalSalesEst * 100) : (totalSpend > 0 ? 100 : 0);
+          const finalTacos = isNaN(realTacosEst) || !isFinite(realTacosEst) ? 0 : realTacosEst;
           document.getElementById('kpi-tacos').textContent = `${finalTacos.toFixed(2)}%`;
 
           document.getElementById('kpi-orders-count').textContent = `${totalOrders} pedidos atribuidos`;
           
           // Estatus semántico ACOS
           const acosKpiLabel = document.getElementById('kpi-acos-status');
-          if (globalAcos <= state.acos) {
+          if (!hasSales) {
+            if (totalSpend > 0) {
+              acosKpiLabel.textContent = 'Sin ventas (Fuga)';
+              acosKpiLabel.className = 'text-[10px] text-red-500 font-semibold';
+            } else {
+              acosKpiLabel.textContent = 'Sin actividad';
+              acosKpiLabel.className = 'text-[10px] text-slate-400 font-semibold';
+            }
+          } else if (globalAcos <= state.acos) {
             acosKpiLabel.textContent = 'ACOS Excelente';
             acosKpiLabel.className = 'text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold';
           } else if (globalAcos <= userAcosMax) {
@@ -1661,7 +1688,7 @@
 
             return `
               <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-                <td class="py-3 px-5 font-bold text-xs max-w-[180px] truncate">${r.term}</td>
+                <td class="py-3 px-5 font-bold text-xs max-w-[180px] truncate" title="${r.term}">${r.term}</td>
                 <td class="py-3 px-4 text-xs">
                   <div class="flex flex-col gap-1 items-start">
                     <span class="px-2 py-0.5 rounded-[6px] text-[9.5px] font-bold font-data-mono uppercase ${campClass}">${r.reportType ? r.reportType.toUpperCase() : 'SP'}</span>
@@ -1713,6 +1740,8 @@
             } else if (filterAction === 'ctr' && r.estado === 'CTR bajo') {
               matchesAction = true;
             } else if (filterAction === 'esperar' && r.estado === 'Esperar') {
+              matchesAction = true;
+            } else if (filterAction === 'sin_imps' && r.estado === 'Sin imps.') {
               matchesAction = true;
             }
 
@@ -2052,6 +2081,15 @@ SD_RETARGET_BOLI_001,Audiencias,In-market office supplies,34000,145,0.43,0.19,27
 
         // Cargar los valores iniciales de negocio
         UIManager.recalculateCalibrations();
+
+        // Restaurar modo oscuro guardado o según preferencia del sistema
+        try {
+          const savedTheme = localStorage.getItem('ppc_theme');
+          const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            UIManager.toggleDarkMode();
+          }
+        } catch (e) {}
       };
 
       // Exponer APIs públicas del Namespace
