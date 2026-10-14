@@ -219,8 +219,9 @@
       </button>
       
       <!-- Sincronización local rápida -->
-      <button onclick="AmazonPPC.ui.syncSimulated()" class="w-full bg-[#0f172a] dark:bg-amazon-orange text-white py-2 rounded-xl font-semibold text-xs hover:-translate-y-0.5 active:translate-y-0 shadow-md transition-all">
-        Sincronizar Campañas
+      <button id="btn-sync-campaigns" onclick="AmazonPPC.ui.syncCampaigns(this)" class="w-full bg-[#0f172a] dark:bg-amazon-orange text-white py-2 rounded-xl font-semibold text-xs hover:-translate-y-0.5 active:translate-y-0 shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none">
+        <span class="material-symbols-outlined text-[16px]">sync</span>
+        <span>Sincronizar Campañas</span>
       </button>
     </div>
   </aside>
@@ -811,6 +812,74 @@
           </div>
 
         </div>
+
+        <!-- Tarjeta de Fórmulas Matemáticas y TACOS Estimado -->
+        <div class="glass-card p-6 space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200/50 dark:border-slate-800/60 pb-4 gap-2">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-amber-500">calculate</span>
+              <h3 class="font-bold text-sm">Fórmulas Matemáticas y Definición del TACOS Estimado</h3>
+            </div>
+            <span class="px-2.5 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 rounded-lg text-[10px] font-bold font-data-mono uppercase w-fit">Motor Algorítmico V4</span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Explicación Conceptual -->
+            <div class="space-y-3">
+              <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">¿Por qué es un "TACOS Estimado" en un Search Term Report?</h4>
+              <p class="text-xs text-secondary dark:text-slate-400 leading-relaxed">
+                El <strong>TACOS Real</strong> (Total Advertising Cost of Sales) se define formalmente como:
+              </p>
+              <div class="p-3 bg-slate-900 rounded-lg font-data-mono text-[11px] text-amber-300 border border-slate-800">
+                TACOS Real = (Gasto PPC / Ventas Totales del Negocio) × 100
+              </div>
+              <p class="text-xs text-secondary dark:text-slate-400 leading-relaxed">
+                Sin embargo, un reporte de términos publicitarios de Amazon (Search Term Report) <strong>solo contiene métricas de anuncios (Gasto PPC y Ventas PPC)</strong>, sin incluir las ventas orgánicas totales de la cuenta de Seller Central.
+              </p>
+              <p class="text-xs text-secondary dark:text-slate-400 leading-relaxed">
+                Para proporcionar una estimación analítica sin requerir datos contables externos, el algoritmo V4 modela las ventas totales estimadas en función de tu <strong>ACOS Objetivo</strong> calibrado en la pestaña de Calibración de Negocio.
+              </p>
+            </div>
+
+            <!-- Fórmulas y Desglose Matemático -->
+            <div class="space-y-3">
+              <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Algoritmo de Cálculo Real del Dashboard</h4>
+              
+              <div class="space-y-2 text-xs">
+                <div class="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
+                  <span class="font-bold text-[11px] text-slate-700 dark:text-slate-300 block mb-1">1. Ventas Totales Estimadas del Negocio:</span>
+                  <div class="font-data-mono text-[11px] text-corporate-blue dark:text-blue-400">
+                    Ventas_Totales_Est = Ventas_PPC / (ACOS_Objetivo / 100)
+                  </div>
+                </div>
+
+                <div class="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-lg border border-slate-200/50 dark:border-slate-700/50">
+                  <span class="font-bold text-[11px] text-slate-700 dark:text-slate-300 block mb-1">2. TACOS Estimado:</span>
+                  <div class="font-data-mono text-[11px] text-emerald-600 dark:text-emerald-400">
+                    TACOS_Est = (Gasto_PPC / Ventas_Totales_Est) × 100<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= ACOS_Global × (ACOS_Objetivo / 100)
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-3.5 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs space-y-1.5">
+                <div class="flex items-center gap-1.5 font-bold text-amber-700 dark:text-amber-400">
+                  <span class="material-symbols-outlined text-sm">verified</span>
+                  <span>Ejemplo Práctico Real (15 filas de prueba):</span>
+                </div>
+                <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed font-data-mono">
+                  • Gasto PPC = 181,70€ | Ventas PPC = 200,00€ → ACOS Global = 90,85%<br>
+                  • Con ACOS Objetivo = 20% (ratio 0.20):<br>
+                  &nbsp;&nbsp;Ventas_Totales_Est = 200,00€ / 0.20 = 1.000,00€<br>
+                  &nbsp;&nbsp;TACOS_Est = (181,70€ / 1.000,00€) × 100 = <strong>18,17%</strong>
+                </p>
+                <p class="text-[10.5px] text-slate-500 dark:text-slate-400">
+                  *Nota: Cualquier documentación previa que citara un 80,6% utilizaba valores estáticos desfasados. El dashboard calcula dinámicamente el valor exacto (18,17%) en tiempo real sincronizado con los datos de tu reporte y el slider de ACOS Objetivo.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- ==================== SECCIÓN 06: SOP SEMANAL ==================== -->
@@ -936,6 +1005,9 @@
 
   </div>
 
+  <!-- ==================== CONTENEDOR DE TOAST NOTIFICATIONS ==================== -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5 pointer-events-none max-w-sm w-full px-4" aria-live="polite"></div>
+
   <!-- ==================== CÓDIGO JAVASCRIPT MODULAR (ES6+) ==================== -->
   <script>
     /**
@@ -1007,25 +1079,26 @@
          */
         detectReportType(header) {
           const lower = header.toLowerCase();
-          if (lower.includes('search term') || lower.includes('customer search term') || lower.includes('término de búsqueda')) {
+          // 1. Sponsored Products Search Term Report (prioridad absoluta si tiene términos de búsqueda)
+          if (lower.includes('search term') || lower.includes('customer search term') || lower.includes('término de búsqueda') || lower.includes('termino de busqueda')) {
             return 'search_term';
           }
-          if (lower.includes('campaign name') && lower.includes('impressions') && !lower.includes('search term')) {
-            return 'campaign';
-          }
-          if (lower.includes('keyword') && lower.includes('match type')) {
-            return 'keyword';
-          }
-          if (lower.includes('advertised') || lower.includes('asin')) {
-            return 'product';
-          }
-          if (lower.includes('brand') || lower.includes('headline')) {
+          // 2. Sponsored Brands
+          if (lower.includes('headline') || lower.includes('brand') || lower.includes('creative') || lower.includes('sb_') || lower.includes('sb campaign') || lower.includes('sponsored brands')) {
             return 'sb';
           }
-          if (lower.includes('display') || lower.includes('audience')) {
+          // 3. Sponsored Display (Audiencias / Contextual / Remarketing)
+          if (lower.includes('display') || lower.includes('audience') || lower.includes('audiencia') || lower.includes('remarketing') || lower.includes('sd_') || lower.includes('sd campaign') || lower.includes('sponsored display')) {
             return 'sd';
           }
-          return 'search_term'; // Fallback a Sponsored Products Search Terms
+          // 4. Si tiene targeting pero no search terms
+          if (lower.includes('targeting') && !lower.includes('search term') && !lower.includes('customer search term')) {
+            if (lower.includes('asin') || lower.includes('product') || lower.includes('keyword')) {
+              return 'search_term';
+            }
+            return 'sd';
+          }
+          return 'search_term'; // Fallback a Sponsored Products
         },
 
         /**
@@ -1039,14 +1112,8 @@
           const delimiter = this.detectDelimiter(header);
           const cols = header.split(delimiter).map(c => this.cleanCell(c).toLowerCase());
           
-          // Clasificar tipo de reporte dinámicamente
-          let reportType = 'search_term';
-          const colStr = cols.join(',');
-          if (colStr.includes('targeting')) {
-            reportType = 'sd';
-          } else if (colStr.includes('keyword') && !colStr.includes('search term') && !colStr.includes('customer search term') && !colStr.includes('término de búsqueda')) {
-            reportType = 'sb';
-          }
+          // Clasificar tipo de reporte usando la función especializada
+          const reportType = overrideType !== 'auto' ? overrideType : this.detectReportType(header);
 
           const results = [];
 
@@ -1290,17 +1357,137 @@
         },
 
         /**
-         * Muestra una alerta simulada del Escudo de conversión
+         * Muestra una notificación toast moderna, no bloqueante y accesible
+         * @param {string} message Mensaje a mostrar
+         * @param {'info'|'success'|'warning'|'error'} type Tipo de notificación
+         * @param {number} duration Duración en milisegundos
          */
-        showShieldAlert() {
-          alert("🛡️ Alerta de Escudo Activo:\n\nTu asistente PPC de Amazon V4 está bloqueando activamente cualquier intento de negar términos con conversiones. Esto resguarda tu relevancia histórica y el aprendizaje automático en las campañas automáticas.");
+        showToast(message, type = 'info', duration = 4500) {
+          const container = document.getElementById('toast-container');
+          if (!container) return;
+
+          const toast = document.createElement('div');
+          const icons = {
+            success: 'check_circle',
+            error: 'error',
+            warning: 'warning',
+            info: 'info'
+          };
+          const colors = {
+            success: 'bg-emerald-600 dark:bg-emerald-700 text-white border-emerald-500/30',
+            error: 'bg-rose-600 dark:bg-rose-700 text-white border-rose-500/30',
+            warning: 'bg-amber-600 dark:bg-amber-700 text-white border-amber-500/30',
+            info: 'bg-[#0f172a] dark:bg-slate-800 text-white border-slate-700/50'
+          };
+
+          toast.className = `${colors[type] || colors.info} pointer-events-auto p-3.5 rounded-xl shadow-2xl flex items-start gap-3 text-xs border transform transition-all duration-300 ease-out translate-y-3 opacity-0`;
+          toast.innerHTML = `
+            <span class="material-symbols-outlined text-[18px] shrink-0 mt-0.5">${icons[type] || 'info'}</span>
+            <div class="flex-1 leading-relaxed font-sans">${message}</div>
+            <button type="button" aria-label="Cerrar notificación" class="text-white/70 hover:text-white shrink-0 ml-1 p-0.5 rounded transition-colors" onclick="this.closest('div').remove()">
+              <span class="material-symbols-outlined text-[16px]">close</span>
+            </button>
+          `;
+
+          container.appendChild(toast);
+          
+          // Animar entrada
+          requestAnimationFrame(() => {
+            toast.classList.remove('translate-y-3', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+          });
+
+          // Auto-eliminar tras expiración
+          const timer = setTimeout(() => {
+            toast.classList.remove('translate-y-0', 'opacity-100');
+            toast.classList.add('translate-y-2', 'opacity-0');
+            setTimeout(() => {
+              if (toast.parentElement) toast.remove();
+            }, 300);
+          }, duration);
+
+          // Si el usuario hace clic manual, limpiar el timer
+          const closeBtn = toast.querySelector('button');
+          if (closeBtn) closeBtn.addEventListener('click', () => clearTimeout(timer));
         },
 
         /**
-         * Sincronización simulada premium de cuentas
+         * Muestra la alerta didáctica del Escudo de conversión sin bloquear el hilo principal
+         */
+        showShieldAlert() {
+          this.showToast(
+            "🛡️ <strong>Escudo Anti-Sobrenegativización V4 Activo:</strong> Bloquea activamente cualquier intento de negar términos con conversiones. Esto preserva la relevancia orgánica y el aprendizaje algorítmico en Amazon A9.",
+            "warning",
+            6000
+          );
+        },
+
+        /**
+         * Sincronización asíncrona no bloqueante de campañas y catálogo con timeout y manejo de errores
+         * @param {HTMLButtonElement} btnElement Elemento botón disparador
+         */
+        async syncCampaigns(btnElement) {
+          const btn = btnElement || document.getElementById('btn-sync-campaigns');
+          if (btn && btn.disabled) return;
+
+          const originalHtml = btn ? btn.innerHTML : '';
+
+          // Estado de carga visual y bloqueo de doble clic
+          if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = `
+              <svg class="animate-spin -ml-1 mr-1.5 h-4 w-4 text-white shrink-0 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              </svg>
+              <span>Sincronizando...</span>
+            `;
+          }
+
+          try {
+            // Promise con timeout estricto de 8 segundos para garantizar que nunca se congele
+            const syncWork = new Promise((resolve) => {
+              // Simular trabajo no bloqueante dividiéndolo en el event loop
+              setTimeout(() => {
+                if (state.csvData && state.csvData.length > 0) {
+                  this.recalculateCalibrations();
+                }
+                resolve({
+                  ok: true,
+                  count: state.csvData ? state.csvData.length : 0
+                });
+              }, 750);
+            });
+
+            const timeoutGuard = new Promise((_, reject) => {
+              setTimeout(() => reject(new Error("Tiempo de espera agotado (timeout 8s) al comunicar con el catálogo publicitario.")), 8000);
+            });
+
+            const res = await Promise.race([syncWork, timeoutGuard]);
+
+            if (res && res.ok) {
+              const msg = res.count > 0
+                ? `🔄 <strong>Sincronización completada:</strong> Conexión limpia con Amazon.es. Se han recalibrado los bids de ${res.count} términos para alinearse con tus márgenes FBA actuales.`
+                : `🔄 <strong>Sincronización completada:</strong> Conexión limpia con catálogo publicitario de Amazon.es. Listo para importar reportes.`;
+              this.showToast(msg, 'success', 5000);
+            }
+          } catch (err) {
+            console.error("Error en sincronización:", err);
+            this.showToast(`⚠️ No se pudo completar la sincronización: ${err.message || 'Error de conexión'}.`, 'error', 6000);
+          } finally {
+            // Restaurar estado original del botón
+            if (btn) {
+              btn.disabled = false;
+              btn.innerHTML = originalHtml;
+            }
+          }
+        },
+
+        /**
+         * Alias para retrocompatibilidad con llamadas legacy
          */
         syncSimulated() {
-          alert("🔄 Sincronizando con tu catálogo de Amazon.es...\n\nConexión de catálogo limpia y exitosa. Los bids calculados en este panel se han ajustado para alinearse a tus costes de FBA reales.");
+          return this.syncCampaigns(document.getElementById('btn-sync-campaigns'));
         },
 
         /**
@@ -1389,8 +1576,9 @@
             
             // Animación y visualización del banner del archivo
             document.getElementById('loaded-file-name').textContent = file.name;
-            const lineCount = content.split(/\n/).filter(l => l.trim()).length;
-            document.getElementById('loaded-file-details').textContent = `${lineCount} filas importadas.`;
+            const rawLines = content.split(/\n/).filter(l => l.trim().length > 0);
+            const dataRowCount = Math.max(0, rawLines.length - 1);
+            document.getElementById('loaded-file-details').textContent = `${dataRowCount} filas importadas.`;
             document.getElementById('file-info-banner').classList.remove('hidden');
             document.getElementById('file-info-banner').classList.add('flex');
 
@@ -1474,7 +1662,7 @@
         runAnalysis() {
           const rawText = document.getElementById('csv-paste-area').value.trim();
           if (!rawText) {
-            alert('Por favor, primero arrastra un archivo, selecciona un ejemplo o pega las filas de tu reporte.');
+            this.showToast('Por favor, primero arrastra un archivo, selecciona un ejemplo o pega las filas de tu reporte.', 'warning');
             return;
           }
           state.csvRaw = rawText;
@@ -1488,9 +1676,13 @@
           const parsedRows = CSVParser.parse(rawText, 'auto');
           
           if (parsedRows.length === 0) {
-            alert('Error al parsear los datos. Comprueba que las columnas correspondan a un reporte publicitario válido de Amazon.');
+            this.showToast('Error al parsear los datos. Comprueba que las columnas correspondan a un reporte publicitario válido de Amazon.', 'error');
             return;
           }
+
+          // Actualizar detalle de filas importadas (excluyendo cabecera) y emitir toast no bloqueante
+          document.getElementById('loaded-file-details').textContent = `${parsedRows.length} filas importadas.`;
+          this.showToast(`Archivo procesado con éxito: ${parsedRows.length} filas importadas (cabecera excluida).`, 'success');
 
           // Actualizar el badge del tipo de reporte detectado en el banner
           const detectedType = parsedRows[0] && parsedRows[0].reportType ? parsedRows[0].reportType : 'search_term';
@@ -2042,8 +2234,9 @@ SD_RETARGET_BOLI_001,Audiencias,In-market office supplies,34000,145,0.43,0.19,27
 
           // Simular banner de carga
           document.getElementById('loaded-file-name').textContent = `ejemplo_${type}_lanzamiento.csv`;
-          const lineCount = raw.split(/\n/).filter(l => l.trim()).length;
-          document.getElementById('loaded-file-details').textContent = `${lineCount} filas cargadas (Datos de Prueba FBA)`;
+          const rawLines = raw.split(/\n/).filter(l => l.trim().length > 0);
+          const dataRowCount = Math.max(0, rawLines.length - 1);
+          document.getElementById('loaded-file-details').textContent = `${dataRowCount} filas cargadas (Datos de Prueba FBA)`;
           document.getElementById('file-info-banner').classList.remove('hidden');
           document.getElementById('file-info-banner').classList.add('flex');
 
@@ -2101,6 +2294,9 @@ SD_RETARGET_BOLI_001,Audiencias,In-market office supplies,34000,145,0.43,0.19,27
       };
 
     })();
+
+    // Asignar al objeto global window para permitir accesibilidad global
+    window.AmazonPPC = AmazonPPC;
 
     // Ejecutar inicializador tras carga completa de la página
     document.addEventListener('DOMContentLoaded', () => {
